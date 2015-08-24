@@ -172,7 +172,10 @@ KaldiErrorMessage::KaldiErrorMessage(const char *func, const char *file,
 
 KaldiErrorMessage::~KaldiErrorMessage() NOEXCEPT(false) {
   // (1) Print the message to stderr.
-  std::cerr << ss.str() << '\n';
+  if(g_kaldi_verbose_level != -1)
+  {
+	std::cerr << ss.str() << '\n';
+  }
   // (2) Throw an exception with the message, plus traceback info if available.
   if (!std::uncaught_exception()) {
 #ifdef HAVE_EXECINFO_H

@@ -45,6 +45,7 @@ namespace kaldi {
 /// @{
 
 /// This is set by util/parse-options.{h, cc} if you set --verbose = ? option
+/// set g_kaldi_verbose_level to -1 to disable all logging from this kaldi-error.{h,cc}
 extern int32 g_kaldi_verbose_level;
 
 /// This is set by util/parse-options.{h, cc} (from argv[0]) and used (if set)
@@ -70,7 +71,10 @@ class KaldiWarnMessage {
  public:
   inline std::ostream &stream() { return ss; }
   KaldiWarnMessage(const char *func, const char *file, int32 line);
-  ~KaldiWarnMessage()  { fprintf(stderr, "%s\n", ss.str().c_str()); }
+  ~KaldiWarnMessage()  {
+	if(g_kaldi_verbose_level != -1)
+	  fprintf(stderr, "%s\n", ss.str().c_str());
+  }
  private:
   std::ostringstream ss;
 };
@@ -80,7 +84,10 @@ class KaldiLogMessage {
  public:
   inline std::ostream &stream() { return ss; }
   KaldiLogMessage(const char *func, const char *file, int32 line);
-  ~KaldiLogMessage() { fprintf(stderr, "%s\n", ss.str().c_str()); }
+  ~KaldiLogMessage() {
+    if(g_kaldi_verbose_level != -1)
+	  fprintf(stderr, "%s\n", ss.str().c_str());
+  }
  private:
   std::ostringstream ss;
 };
@@ -91,7 +98,10 @@ class KaldiVlogMessage {
   KaldiVlogMessage(const char *func, const char *file, int32 line,
                    int32 verbose_level);
   inline std::ostream &stream() { return ss; }
-  ~KaldiVlogMessage() { fprintf(stderr, "%s\n", ss.str().c_str()); }
+  ~KaldiVlogMessage() {
+    if(g_kaldi_verbose_level != -1)
+      fprintf(stderr, "%s\n", ss.str().c_str());
+  }
  private:
   std::ostringstream ss;
 };

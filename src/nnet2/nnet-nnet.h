@@ -230,7 +230,7 @@ class Nnet {
   
   void Write(std::ostream &os, bool binary) const;
 
-  void Read(std::istream &is, bool binary);
+  virtual void Read(std::istream &is, bool binary);
 
   void SetZero(bool treat_as_gradient); // Sets all parameters to zero and if
   // treat_as_gradient == true, also tells components to "think of themselves as

@@ -56,7 +56,7 @@ class AmNnet {
   
   void Write(std::ostream &os, bool binary) const;
   
-  void Read(std::istream &is, bool binary);
+  virtual void Read(std::istream &is, bool binary);
 
   const Nnet &GetNnet() const { return nnet_; }
   

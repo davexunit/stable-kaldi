@@ -977,6 +977,7 @@ class AffineComponentPreconditionedOnline: public AffineComponent {
 
   // Configs for preconditioner.  The input side tends to be better conditioned ->
   // smaller rank needed, so make them separately configurable.
+  protected:
   int32 rank_in_;
   int32 rank_out_;
   int32 update_period_;

@@ -286,7 +286,7 @@ class Nnet {
   
   friend class NnetUpdater;
   friend class DecodableNnet;
- private:
+ protected:
   std::vector<Component*> components_;
 };
 

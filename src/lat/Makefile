@@ -6,7 +6,7 @@ include ../kaldi.mk
 EXTRA_CXXFLAGS += -Wno-sign-compare
 
 TESTFILES = kaldi-lattice-test push-lattice-test minimize-lattice-test \
-      determinize-lattice-pruned-test 
+      determinize-lattice-pruned-test
 
 OBJFILES = kaldi-lattice.o lattice-functions.o word-align-lattice.o \
 	   phone-align-lattice.o word-align-lattice-lexicon.o sausages.o \
@@ -26,7 +26,6 @@ include ../makefiles/default_rules.mk
 # It's purpose is to make the transition more seamless for users
 # Will be removed in a half a year or so.
 $(LIBFILE): $(OBJFILES)
-	$(AR) -d $(LIBNAME).a kws-functions.o
 	$(AR) -cru $(LIBNAME).a $(OBJFILES)
 	$(RANLIB) $(LIBNAME).a
 ifeq ($(KALDI_FLAVOR), dynamic)

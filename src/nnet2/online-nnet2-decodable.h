@@ -83,11 +83,11 @@ class DecodableNnet2Online: public DecodableInterface {
   /// Indices are one-based!  This is for compatibility with OpenFst.
   virtual int32 NumIndices() const { return trans_model_.NumTransitionIds(); }
   
- private:
+ protected:
 
   /// If the neural-network outputs for this frame are not cached, it computes
   /// them (and possibly for some succeeding frames)
-  void ComputeForFrame(int32 frame);
+  virtual void ComputeForFrame(int32 frame);
   
   OnlineFeatureInterface *features_;
   const AmNnet &nnet_;

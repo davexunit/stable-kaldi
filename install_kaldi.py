@@ -85,4 +85,3 @@ if __name__ == '__main__':
 
     install_headers(kaldi_root, install_dir)
     install_libs(kaldi_root, install_dir)
-    install_bin(kaldi_root, install_dir)

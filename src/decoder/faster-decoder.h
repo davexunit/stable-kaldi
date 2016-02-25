@@ -59,7 +59,7 @@ struct FasterDecoderOptions {
 };
 
 class FasterDecoder {
- public:
+  public:
   typedef fst::StdArc Arc;
   typedef Arc::Label Label;
   typedef Arc::StateId StateId;
@@ -102,100 +102,54 @@ class FasterDecoder {
 
  public:
   class Token {
-	public:
-	  Arc arc_; // contains only the graph part of the cost;
-	  // we can work out the acoustic part from difference between
-	  // "cost_" and prev->cost_.
-	  Token *prev_;
-	  int32 ref_count_;
-	  // if you are looking for weight_ here, it was removed and now we just have
-	  // cost_, which corresponds to ConvertToCost(weight_).
-	  double cost_;
-	  inline Token(const Arc &arc, BaseFloat ac_cost, Token *prev):
-		  arc_(arc), prev_(prev), ref_count_(1) {
-		if (prev) {
-		  prev->ref_count_++;
-		  cost_ = prev->cost_ + arc.weight.Value() + ac_cost;
-		} else {
-		  cost_ = arc.weight.Value() + ac_cost;
-		}
-	  }
-	  inline Token(const Arc &arc, Token *prev):
-		  arc_(arc), prev_(prev), ref_count_(1) {
-		if (prev) {
-		  prev->ref_count_++;
-		  cost_ = prev->cost_ + arc.weight.Value();
-		} else {
-		  cost_ = arc.weight.Value();
-		}
-	  }
-	  inline bool operator < (const Token &other) {
-		return cost_ > other.cost_;
-	  }
+   public:
+    Arc arc_; // contains only the graph part of the cost;
+    // we can work out the acoustic part from difference between
+    // "cost_" and prev->cost_.
+    Token *prev_;
+    int32 ref_count_;
 
-	  inline static void TokenDelete(Token *tok) {
-		while (--tok->ref_count_ == 0) {
-		  Token *prev = tok->prev_;
-		  delete tok;
-		  if (prev == NULL) return;
-		  else tok = prev;
-		}
-	#ifdef KALDI_PARANOID
-		KALDI_ASSERT(tok->ref_count_ > 0);
-	#endif
-	  }
-	};
+    // if you are looking for weight_ here, it was removed and now we just have
+    // cost_, which corresponds to ConvertToCost(weight_).
+    double cost_;
+    inline Token(const Arc &arc, BaseFloat ac_cost, Token *prev):
+        arc_(arc), prev_(prev), ref_count_(1) {
+      if (prev) {
+        prev->ref_count_++;
+        cost_ = prev->cost_ + arc.weight.Value() + ac_cost;
+      } else {
+        cost_ = arc.weight.Value() + ac_cost;
+      }
+    }
+    inline Token(const Arc &arc, Token *prev):
+        arc_(arc), prev_(prev), ref_count_(1) {
+      if (prev) {
+        prev->ref_count_++;
+        cost_ = prev->cost_ + arc.weight.Value();
+      } else {
+        cost_ = arc.weight.Value();
+      }
+    }
+    inline bool operator < (const Token &other) {
+      return cost_ > other.cost_;
+  }
 
-	typedef HashList<StateId, Token*>::Elem Elem;
+  inline static void TokenDelete(Token *tok) {
+    while (--tok->ref_count_ == 0) {
+      Token *prev = tok->prev_;
+      delete tok;
+      if (prev == NULL) return;
+      else tok = prev;
+    }
+#ifdef KALDI_PARANOID
+    KALDI_ASSERT(tok->ref_count_ > 0);
+#endif
+  }
+};
+
+typedef HashList<StateId, Token*>::Elem Elem;
 
  protected:
-
-//  class Token {
-//   public:
-//    Arc arc_; // contains only the graph part of the cost;
-//    // we can work out the acoustic part from difference between
-//    // "cost_" and prev->cost_.
-//    Token *prev_;
-//    int32 ref_count_;
-//    // if you are looking for weight_ here, it was removed and now we just have
-//    // cost_, which corresponds to ConvertToCost(weight_).
-//    double cost_;
-//    inline Token(const Arc &arc, BaseFloat ac_cost, Token *prev):
-//        arc_(arc), prev_(prev), ref_count_(1) {
-//      if (prev) {
-//        prev->ref_count_++;
-//        cost_ = prev->cost_ + arc.weight.Value() + ac_cost;
-//      } else {
-//        cost_ = arc.weight.Value() + ac_cost;
-//      }
-//    }
-//    inline Token(const Arc &arc, Token *prev):
-//        arc_(arc), prev_(prev), ref_count_(1) {
-//      if (prev) {
-//        prev->ref_count_++;
-//        cost_ = prev->cost_ + arc.weight.Value();
-//      } else {
-//        cost_ = arc.weight.Value();
-//      }
-//    }
-//    inline bool operator < (const Token &other) {
-//      return cost_ > other.cost_;
-//    }
-//
-//    inline static void TokenDelete(Token *tok) {
-//      while (--tok->ref_count_ == 0) {
-//        Token *prev = tok->prev_;
-//        delete tok;
-//        if (prev == NULL) return;
-//        else tok = prev;
-//      }
-//#ifdef KALDI_PARANOID
-//      KALDI_ASSERT(tok->ref_count_ > 0);
-//#endif
-//    }
-//  };
-//  typedef HashList<StateId, Token*>::Elem Elem;
-
 
   /// Gets the weight cutoff.  Also counts the active tokens.
   double GetCutoff(Elem *list_head, size_t *tok_count,

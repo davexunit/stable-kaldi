@@ -107,8 +107,8 @@ int main(int argc, char *argv[]) {
     bool do_endpointing = false;
     bool online = true;
 
-    std::string init_adaptation_state = "";
-    std::string final_adaptation_state = "";
+    std::string init_adaptation_state_file = "";
+    std::string final_adaptation_state_file = "";
     bool adapt_between_utts = true;
 
     po.Register("chunk-length", &chunk_length_secs,
@@ -129,11 +129,9 @@ int main(int argc, char *argv[]) {
                 "--chunk-length=-1.");
     po.Register("num-threads-startup", &g_num_threads,
                 "Number of threads used when initializing iVector extractor.");
-    po.Register("init-adaptation-state", &init_adaptation_state,
+    po.Register("init-adaptation-state", &init_adaptation_state_file,
                 "input file containing the initial i-vector adaptation state");
-    po.Register("final-adaptation-state", &final_adaptation_state,
-                "output file containing the initial i-vector adaptation state");
-    po.Register("final-adaptation-state", &final_adaptation_state,
+    po.Register("final-adaptation-state", &final_adaptation_state_file,
                 "output file containing the initial i-vector adaptation state");
     po.Register("adapt-between-utts", &adapt_between_utts,
                 "if true (default) adaptation statistics are carried over the "
@@ -203,11 +201,11 @@ int main(int argc, char *argv[]) {
       // If an initial adaptation statistics file is given, set the statistics from it.
       // If there are multiple speakers then this same file is loaded for each speaker
       // (intended to be used when decoding with just 1 speaker label).
-      if (init_adaptation_state != "") {
+      if (init_adaptation_state_file != "") {
           bool isBinary;
-          Input is(init_adaptation_state, &isBinary);
+          Input is(init_adaptation_state_file, &isBinary);
           adaptation_state.Read(is.Stream(), isBinary);
-          KALDI_LOG << "Loading adaptation statistics from " << init_adaptation_state << " (" << adaptation_state.ivector_stats.NumFrames() << " frames)" << endl;
+          KALDI_LOG << "Loading adaptation statistics from " << init_adaptation_state_file << " (" << adaptation_state.ivector_stats.NumFrames() << " frames)" << endl;
       }
 
       for (size_t i = 0; i < uttlist.size(); i++) {
@@ -305,10 +303,10 @@ int main(int argc, char *argv[]) {
       // Save the final adaptation state to a file.  If there are multiple speakers then
       // this file is overwritten for each speaker (intended to be used when decoding
       // with just 1 speaker label).
-      if (final_adaptation_state != "") {
-          KALDI_LOG << "Saving adaptation statistics to " << final_adaptation_state << " (" << adaptation_state.ivector_stats.NumFrames() << " frames)" << endl;
+      if (final_adaptation_state_file != "") {
+          KALDI_LOG << "Saving adaptation statistics to " << final_adaptation_state_file << " (" << adaptation_state.ivector_stats.NumFrames() << " frames)" << endl;
           bool isBinary = false;
-          Output os(final_adaptation_state, isBinary);
+          Output os(final_adaptation_state_file, isBinary);
           adaptation_state.Write(os.Stream(), isBinary);
       }
     }

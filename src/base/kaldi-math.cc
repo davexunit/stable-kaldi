@@ -49,7 +49,7 @@ int Rand(struct RandomState* state)
   return rand();
 #else
   if (state) {
-    return rand_r(&(state->seed));
+    return rand();
   }
   else {
     int rs = pthread_mutex_lock(&_RandMutex);

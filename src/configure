@@ -70,7 +70,7 @@ function usage {
   echo 'Usage: ./configure [--static|--shared] [--threaded-atlas={yes|no}] [--atlas-root=ATLASROOT] [--fst-root=FSTROOT]
   [--openblas-root=OPENBLASROOOT] [--clapack-root=CLAPACKROOT] [--mkl-root=MKLROOT] [--mkl-libdir=MKLLIBDIR]
   [--omp-libdir=OMPDIR] [--static-fst={yes|no}] [--static-math={yes|no}] [--threaded-math={yes|no}] [--mathlib=ATLAS|MKL|CLAPACK|OPENBLAS]
-  [--use-cuda={yes|no}] [--cudatk-dir=CUDATKDIR]';
+  [--use-cuda={yes|no}] [--cudatk-dir=CUDATKDIR] [--android_openblas={yes|no}';
 }
 
 threaded_atlas=false #  By default, use the un-threaded version of ATLAS.
@@ -79,6 +79,7 @@ static_math=false
 static_fst=false
 use_cuda=true
 dynamic_kaldi=false
+android_openblas=false
 
 cmd_line="$0 $@"  # Save the command line to include in kaldi.mk
 
@@ -134,6 +135,8 @@ do
   OMPLIBDIR=`read_dirname $1`; shift ;;
   --mathlib=*)
   MATHLIB=`expr "X$1" : '[^=]*=\(.*\)'`; shift ;;
+  --android-openblas=yes)
+  android_openblas=true; static-fst=yes; shift ;;
   --cudatk-dir=*)
   CUDATKDIR=`read_dirname $1`; shift ;; #CUDA is used in src/cudamatrix and src/nnet{,bin} only
   *)  echo "Unknown argument: $1, exiting"; usage; exit 1 ;;
@@ -455,7 +458,6 @@ function linux_configure_debian_ubuntu3 {
   echo ATLASINC = $ATLASROOT/include >> kaldi.mk
   echo ATLASLIBS = $ATLASLIBS >> kaldi.mk
   cat makefiles/linux_atlas.mk >> kaldi.mk
-  fix_cxx_flag
   echo "Successfully configured for Debian/Ubuntu Linux [dynamic libraries] with ATLASLIBS =$ATLASLIBS"
   $use_cuda && linux_configure_cuda
   linux_configure_speex
@@ -703,6 +705,31 @@ else
   echo "OPENFST_GE_10400 = 0" >> kaldi.mk
 fi
 
+if $android_openblas ; then
+  OPENFSTLIBS="$FSTROOT/lib/libfst.a"
+  echo "OPENFSTLIBS = $OPENFSTLIBS" >> kaldi.mk
+
+  OPENBLASROOT=`rel2abs "$OPENBLASROOT"`
+  if [ -z "$OPENBLASROOT" ]; then
+    failure "Must specify the location of OPENBLAS with --openblas-root option (and it must exist)"
+  fi
+  if [ ! -f $OPENBLASROOT/lib/libopenblas.a ]; then
+    failure "Expected to find the file $OPENBLASROOT/lib/libopenblas.a"
+  fi
+  echo "Your math library seems to be OpenBLAS.  Configuring appropriately."
+
+  OPENBLASLIBS="$OPENBLASROOT/lib/libopenblas.a $OPENBLASROOT/lib/libclapack.a $OPENBLASROOT/lib/liblapack.a $OPENBLASROOT/lib/libblas.a $OPENBLASROOT/lib/libf2c.a"
+  echo "OPENBLASROOT = $OPENBLASROOT" >> kaldi.mk
+  echo "OPENBLASLIBS = $OPENBLASLIBS" >> kaldi.mk
+
+  cat makefiles/android_openblas.mk >> kaldi.mk
+
+  echo "Successfully configured OpenBLAS from $OPENBLASROOT."
+  # skip the tests for gcc and slow expf.
+  echo "SUCCESS"
+  exit 0;
+fi
+
 # Most of the OS-specific steps below will append to kaldi.mk
 echo "Doing OS specific configurations ..."
 
@@ -748,6 +775,7 @@ if [ "`uname`" == "Darwin"  ]; then
   echo "Configuration succeeded for platform Darwin."
   exit_success;
 fi
+
 
 if [ "`uname -o`" == "Cygwin"  ]; then
     echo "On Cygwin: checking for linear algebra libraries ..."

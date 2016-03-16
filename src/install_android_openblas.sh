@@ -21,9 +21,10 @@ sed -i.bak 's/AR = ar//g' ./kaldi.mk
 sed -i.bak 's/CXXFLAGS += -msse -msse2 / CXXFLAGS += -mhard-float -D_NDK_MATH_NO_SOFTFP=1 -I\/opt\/arm-tools\/include  -I\/tmp\/my-android-toolchain\/sysroot\/usr\/include /g' ./kaldi.mk
 sed -i.bak 's/-DHAVE_EXECINFO_H=1//g' ./kaldi.mk
 # Openblas flags for hardfloat
-sed -i.bak 's/LDFLAGS = -g/LDFLAGS = -Wl,--no-warn-mismatch -lm_hard/g' ./kaldi.mk
+sed -i.bak 's/LDFLAGS = -g/LDFLAGS = -Wl,--no-warn-mismatch -lm_hard -pie/g' ./kaldi.mk
 # android does not need pthread
 sed -i.bak 's/-lpthread//g' ./kaldi.mk
-sed -i.bak 's/-ldl -lm  -framework Accelerate/ \/opt\/arm-tools\/lib\/libopenblas.a \/opt\/arm-tools\/lib\/libclapack.a \/opt\/arm-tools\/lib\/liblapack.a \/opt\/arm-tools\/lib\/libblas.a \/opt\/arm-tools\/lib\/libf2c.a -ldl -lm/g' ./kaldi.mk
-make
+sed -i.bak 's/-ldl -lm  -framework Accelerate/ \/opt\/arm-tools\/lib\/libopenblas.a \/opt\/arm-tools\/lib\/libclapack.a \/opt\/arm-tools\/lib\/liblapack.a \/opt\/arm-tools\/lib\/libblas.a \/opt\/arm-tools\/lib\/libf2c.a -ldl -lm_hard/g' ./kaldi.mk
+make -j7 online2bin
 make install
+python ../install_kaldi.py . /opt/arm-tools/

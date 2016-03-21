@@ -125,7 +125,7 @@ static double ComputeObjfAndGradient(
     const std::vector<NnetExample> &validation_set,
     const Vector<double> &scale_params,
     const std::vector<Nnet> &nnets,
-    bool debug,
+    bool dodebug,
     Vector<double> *gradient) {
 
   Vector<BaseFloat> scale_params_float(scale_params);
@@ -163,7 +163,7 @@ static double ComputeObjfAndGradient(
     KALDI_ASSERT(i == scale_params.Dim());
   }
 
-  if (debug) {
+  if (dodebug) {
     KALDI_LOG << "Double-checking gradient computation";
     
     Vector<BaseFloat> manual_gradient(scale_params.Dim());

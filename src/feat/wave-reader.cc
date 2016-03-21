@@ -220,7 +220,7 @@ void WaveData::Read(std::istream &is) {
   uint32 data_chunk_size = ReadUint32(is, swap);
   riff_chunk_read += 4;
 
-  if (std::abs((riff_chunk_read + data_chunk_size) - riff_chunk_size) > 1) {
+  if (std::abs(static_cast<int>((riff_chunk_read + data_chunk_size) - riff_chunk_size)) > 1) {
     // we allow the size to be off by one, because there is a weirdness in the
     // format of RIFF files that means that the input may sometimes be padded
     // with 1 unused byte to make the total size even.

@@ -170,7 +170,7 @@ class FastNnetCombiner {
       double *regularizer_objf);
   
   void ComputeCurrentNnet(
-      Nnet *dest, bool debug = false);
+      Nnet *dest, bool dodebug = false);
 
   static void CombineNnets(const Vector<double> &scale_params,
                            const std::vector<Nnet> &nnets,
@@ -353,7 +353,7 @@ double FastNnetCombiner::ComputeObjfAndGradient(
 }
 
 void FastNnetCombiner::ComputeCurrentNnet(
-    Nnet *dest, bool debug) {
+    Nnet *dest, bool dodebug) {
   int32 num_nnets = nnets_.size();
   KALDI_ASSERT(num_nnets >= 1);
   KALDI_ASSERT(params_.Dim() == num_nnets * nnets_[0].NumUpdatableComponents());
@@ -365,7 +365,7 @@ void FastNnetCombiner::ComputeCurrentNnet(
   else
     raw_params = params_; // C not set up yet: interpret params_ as raw parameters.
   
-  if (debug) {
+  if (dodebug) {
     Matrix<double> params_mat(num_nnets,
                               nnets_[0].NumUpdatableComponents());
     params_mat.CopyRowsFromVec(raw_params);

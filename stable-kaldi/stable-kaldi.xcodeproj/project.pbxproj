@@ -333,11 +333,11 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		5467AAEC1CA04F100001A6B1 /* CopyFiles */ = {
+		5467CD011CA43E680001A6B1 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
-			dstPath = "include/$(PRODUCT_NAME)";
-			dstSubfolderSpec = 16;
+			dstPath = "";
+			dstSubfolderSpec = 7;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1006,7 +1006,6 @@
 			children = (
 				5467BC811CA08DE90001A6B1 /* src */,
 				5467BC791CA057EE0001A6B1 /* stable-openfst.xcodeproj */,
-				5467AAF01CA04F100001A6B1 /* stable-kaldi */,
 				5467AAEF1CA04F100001A6B1 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -1017,13 +1016,6 @@
 				5467AAEE1CA04F100001A6B1 /* libstable-kaldi.a */,
 			);
 			name = Products;
-			sourceTree = "<group>";
-		};
-		5467AAF01CA04F100001A6B1 /* stable-kaldi */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = "stable-kaldi";
 			sourceTree = "<group>";
 		};
 		5467BC7A1CA057EE0001A6B1 /* Products */ = {
@@ -1892,7 +1884,7 @@
 			buildPhases = (
 				5467AAEA1CA04F100001A6B1 /* Sources */,
 				5467AAEB1CA04F100001A6B1 /* Frameworks */,
-				5467AAEC1CA04F100001A6B1 /* CopyFiles */,
+				5467CD011CA43E680001A6B1 /* CopyFiles */,
 			);
 			buildRules = (
 			);
@@ -2358,6 +2350,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_CXX_LIBRARY = "libc++";
+				DEPLOYMENT_LOCATION = NO;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"HAVE_POSIX_MEMALIGN=1",
 					"HAVE_CLAPACK=1",
@@ -2366,17 +2359,15 @@
 					KALDI_NO_PORTAUDIO,
 				);
 				HEADER_SEARCH_PATHS = (
-					/usr/local/include,
+					"/usr/local/ios-includes",
 					../src,
-					"<Multiple",
-					"values>",
 				);
 				OTHER_LDFLAGS = (
 					"-ObjC",
 					"std=gnu++11",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SKIP_INSTALL = YES;
+				SKIP_INSTALL = NO;
 			};
 			name = Debug;
 		};
@@ -2384,6 +2375,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_CXX_LIBRARY = "libc++";
+				DEPLOYMENT_LOCATION = NO;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"HAVE_POSIX_MEMALIGN=1",
 					"HAVE_CLAPACK=1",
@@ -2391,17 +2383,15 @@
 					CC_CLANG,
 				);
 				HEADER_SEARCH_PATHS = (
-					/usr/local/include,
+					"/usr/local/ios-includes",
 					../src,
-					"<Multiple",
-					"values>",
 				);
 				OTHER_LDFLAGS = (
 					"-ObjC",
 					"std=gnu++11",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SKIP_INSTALL = YES;
+				SKIP_INSTALL = NO;
 			};
 			name = Release;
 		};

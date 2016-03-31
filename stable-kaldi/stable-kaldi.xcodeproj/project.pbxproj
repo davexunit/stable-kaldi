@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		545BCDC81CAD8DD7001B17D2 /* libstable-openfst.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 54E9CA851CAD893700B42E29 /* libstable-openfst.a */; };
 		5467C3A71CA08DEC0001A6B1 /* io-funcs-test.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5467BC851CA08DE90001A6B1 /* io-funcs-test.cc */; settings = {ASSET_TAGS = (); }; };
 		5467C3A81CA08DEC0001A6B1 /* io-funcs.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5467BC861CA08DE90001A6B1 /* io-funcs.cc */; settings = {ASSET_TAGS = (); }; };
 		5467C3A91CA08DEC0001A6B1 /* kaldi-error-test.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5467BC891CA08DE90001A6B1 /* kaldi-error-test.cc */; settings = {ASSET_TAGS = (); }; };
@@ -316,16 +317,16 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		5467BC7D1CA057EE0001A6B1 /* PBXContainerItemProxy */ = {
+		54E9CA841CAD893700B42E29 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 5467BC791CA057EE0001A6B1 /* stable-openfst.xcodeproj */;
+			containerPortal = 54E9CA801CAD893700B42E29 /* stable-openfst.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = 5467AA8F1CA0427A0001A6B1;
 			remoteInfo = "stable-openfst";
 		};
-		5467C6E21CA0EBB60001A6B1 /* PBXContainerItemProxy */ = {
+		54E9CA881CAD8B6500B42E29 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 5467BC791CA057EE0001A6B1 /* stable-openfst.xcodeproj */;
+			containerPortal = 54E9CA801CAD893700B42E29 /* stable-openfst.xcodeproj */;
 			proxyType = 1;
 			remoteGlobalIDString = 5467AA8E1CA0427A0001A6B1;
 			remoteInfo = "stable-openfst";
@@ -346,7 +347,6 @@
 
 /* Begin PBXFileReference section */
 		5467AAEE1CA04F100001A6B1 /* libstable-kaldi.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libstable-kaldi.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		5467BC791CA057EE0001A6B1 /* stable-openfst.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = "stable-openfst.xcodeproj"; path = "../../openfst/stable-openfst/stable-openfst.xcodeproj"; sourceTree = "<group>"; };
 		5467BC831CA08DE90001A6B1 /* .depend.mk */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = .depend.mk; sourceTree = "<group>"; };
 		5467BC841CA08DE90001A6B1 /* io-funcs-inl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "io-funcs-inl.h"; sourceTree = "<group>"; };
 		5467BC851CA08DE90001A6B1 /* io-funcs-test.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "io-funcs-test.cc"; sourceTree = "<group>"; };
@@ -988,6 +988,7 @@
 		5467C3A01CA08DEC0001A6B1 /* text-utils.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "text-utils.cc"; sourceTree = "<group>"; };
 		5467C3A11CA08DEC0001A6B1 /* text-utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "text-utils.h"; sourceTree = "<group>"; };
 		5467C3A21CA08DEC0001A6B1 /* timer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = timer.h; sourceTree = "<group>"; };
+		54E9CA801CAD893700B42E29 /* stable-openfst.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = "stable-openfst.xcodeproj"; path = "../../stable-openfst/stable-openfst/stable-openfst.xcodeproj"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -995,6 +996,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				545BCDC81CAD8DD7001B17D2 /* libstable-openfst.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1004,8 +1006,8 @@
 		5467AAE51CA04F100001A6B1 = {
 			isa = PBXGroup;
 			children = (
+				54E9CA801CAD893700B42E29 /* stable-openfst.xcodeproj */,
 				5467BC811CA08DE90001A6B1 /* src */,
-				5467BC791CA057EE0001A6B1 /* stable-openfst.xcodeproj */,
 				5467AAEF1CA04F100001A6B1 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -1014,14 +1016,6 @@
 			isa = PBXGroup;
 			children = (
 				5467AAEE1CA04F100001A6B1 /* libstable-kaldi.a */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
-		5467BC7A1CA057EE0001A6B1 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				5467BC7E1CA057EE0001A6B1 /* libstable-openfst.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1875,6 +1869,14 @@
 			path = util;
 			sourceTree = "<group>";
 		};
+		54E9CA811CAD893700B42E29 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				54E9CA851CAD893700B42E29 /* libstable-openfst.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -1889,7 +1891,7 @@
 			buildRules = (
 			);
 			dependencies = (
-				5467C6E31CA0EBB60001A6B1 /* PBXTargetDependency */,
+				54E9CA891CAD8B6500B42E29 /* PBXTargetDependency */,
 			);
 			name = "stable-kaldi";
 			productName = "stable-kaldi";
@@ -1922,8 +1924,8 @@
 			projectDirPath = "";
 			projectReferences = (
 				{
-					ProductGroup = 5467BC7A1CA057EE0001A6B1 /* Products */;
-					ProjectRef = 5467BC791CA057EE0001A6B1 /* stable-openfst.xcodeproj */;
+					ProductGroup = 54E9CA811CAD893700B42E29 /* Products */;
+					ProjectRef = 54E9CA801CAD893700B42E29 /* stable-openfst.xcodeproj */;
 				},
 			);
 			projectRoot = "";
@@ -1934,11 +1936,11 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		5467BC7E1CA057EE0001A6B1 /* libstable-openfst.a */ = {
+		54E9CA851CAD893700B42E29 /* libstable-openfst.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
 			path = "libstable-openfst.a";
-			remoteRef = 5467BC7D1CA057EE0001A6B1 /* PBXContainerItemProxy */;
+			remoteRef = 54E9CA841CAD893700B42E29 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
@@ -2260,10 +2262,10 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		5467C6E31CA0EBB60001A6B1 /* PBXTargetDependency */ = {
+		54E9CA891CAD8B6500B42E29 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = "stable-openfst";
-			targetProxy = 5467C6E21CA0EBB60001A6B1 /* PBXContainerItemProxy */;
+			targetProxy = 54E9CA881CAD8B6500B42E29 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 

@@ -84,7 +84,7 @@ class MelBanks;
 class Mfcc {
  public:
   explicit Mfcc(const MfccOptions &opts);
-  ~Mfcc();
+  virtual ~Mfcc();
 
   int32 Dim() const { return opts_.num_ceps; }
 
@@ -106,8 +106,8 @@ class Mfcc {
                Vector<BaseFloat> *wave_remainder = NULL) const;
   
   typedef MfccOptions Options;
- private:
-  void ComputeInternal(const VectorBase<BaseFloat> &wave,
+ protected:
+  virtual void ComputeInternal(const VectorBase<BaseFloat> &wave,
                        const MelBanks &mel_banks,
                        Matrix<BaseFloat> *output,
                        Vector<BaseFloat> *wave_remainder = NULL) const;

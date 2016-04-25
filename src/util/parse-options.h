@@ -135,7 +135,7 @@ class ParseOptions : public OptionsItf {
   /// Resolve the relative path with the anchor_dir_ previously set
   /// If anchor_dir_ is unset, relative is actually absolute, or the resolved
   /// path does not exist return relative
-  std::string ResolvePath(const std::string &relative);
+  static std::string ResolvePath(const std::string &anchor, const std::string &relative);
 
   /// The following function will return a possibly quoted and escaped
   /// version of "str", according to the current shell.  Currently
@@ -245,11 +245,12 @@ class ParseOptions : public OptionsItf {
 /// "void Register(OptionsItf *po)" which it can call to register the
 /// ParseOptions object.
 template<class C> void ReadConfigFromFile(const std::string config_filename,
-                                          C *c) {
+                                          C *c, const std::string anchor = "") {
   std::ostringstream usage_str;
   usage_str << "Parsing config from "
             << "from '" << config_filename << "'";
   ParseOptions po(usage_str.str().c_str());
+  po.SetAnchorDir(anchor);
   c->Register(&po);
   po.ReadConfigFile(config_filename);
 }
@@ -257,11 +258,12 @@ template<class C> void ReadConfigFromFile(const std::string config_filename,
 /// This variant of the template ReadConfigFromFile is for if you need to read
 /// two config classes from the same file.
 template<class C1, class C2> void ReadConfigsFromFile(const std::string config_filename,
-                                                      C1 *c1, C2 *c2) {
+                                                      C1 *c1, C2 *c2, const std::string anchor = "") {
   std::ostringstream usage_str;
   usage_str << "Parsing config from "
             << "from '" << config_filename << "'";
   ParseOptions po(usage_str.str().c_str());
+  po.SetAnchorDir(anchor);
   c1->Register(&po);
   c2->Register(&po);
   po.ReadConfigFile(config_filename);

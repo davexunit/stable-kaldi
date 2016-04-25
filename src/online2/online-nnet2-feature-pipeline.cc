@@ -34,21 +34,21 @@ OnlineNnet2FeaturePipelineInfo::OnlineNnet2FeaturePipelineInfo(
   }
 
   if (config.mfcc_config != "") {
-    ReadConfigFromFile(config.mfcc_config, &mfcc_opts);
+    ReadConfigFromFile(config.mfcc_config, &mfcc_opts, config.config_anchor);
     if (feature_type != "mfcc")
       KALDI_WARN << "--mfcc-config option has no effect "
                  << "since feature type is set to " << feature_type << ".";
   }  // else use the defaults.
 
   if (config.plp_config != "") {
-    ReadConfigFromFile(config.plp_config, &plp_opts);
+    ReadConfigFromFile(config.plp_config, &plp_opts, config.config_anchor);
     if (feature_type != "plp")
       KALDI_WARN << "--plp-config option has no effect "
                  << "since feature type is set to " << feature_type << ".";
   }  // else use the defaults.
 
   if (config.fbank_config != "") {
-    ReadConfigFromFile(config.fbank_config, &fbank_opts);
+    ReadConfigFromFile(config.fbank_config, &fbank_opts, config.config_anchor);
     if (feature_type != "fbank")
       KALDI_WARN << "--fbank-config option has no effect "
                  << "since feature type is set to " << feature_type << ".";
@@ -57,9 +57,8 @@ OnlineNnet2FeaturePipelineInfo::OnlineNnet2FeaturePipelineInfo(
   add_pitch = config.add_pitch;
   
   if (config.online_pitch_config != "") {
-    ReadConfigsFromFile(config.online_pitch_config,
-                        &pitch_opts,
-                        &pitch_process_opts);
+    ReadConfigsFromFile(config.online_pitch_config, &pitch_opts,
+            &pitch_process_opts, config.config_anchor);
     if (!add_pitch)
       KALDI_WARN << "--online-pitch-config option has no effect "
                  << "since you did not supply --add-pitch option.";
@@ -69,8 +68,8 @@ OnlineNnet2FeaturePipelineInfo::OnlineNnet2FeaturePipelineInfo(
     use_ivectors = true;
     OnlineIvectorExtractionConfig ivector_extraction_opts;
     ReadConfigFromFile(config.ivector_extraction_config,
-                       &ivector_extraction_opts);
-    ivector_extractor_info.Init(ivector_extraction_opts);
+                       &ivector_extraction_opts, config.config_anchor);
+    ivector_extractor_info.Init(ivector_extraction_opts, config.config_anchor);
   } else {
     use_ivectors = false;
   }

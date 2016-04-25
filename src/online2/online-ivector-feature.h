@@ -182,7 +182,7 @@ struct OnlineIvectorExtractionInfo {
 
   OnlineIvectorExtractionInfo(const OnlineIvectorExtractionConfig &config);
 
-  void Init(const OnlineIvectorExtractionConfig &config);
+  void Init(const OnlineIvectorExtractionConfig &config, const std::string &config_anchor = "");
 
   // This constructor creates a version of this object where everything
   // is empty or zero.

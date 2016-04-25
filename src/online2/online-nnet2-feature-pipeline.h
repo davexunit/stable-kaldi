@@ -80,6 +80,9 @@ struct OnlineNnet2FeaturePipelineConfig {
   // OnlineIvectorExtractionConfig.
   std::string ivector_extraction_config;
 
+  // Anchor used for resolving relative config file names
+  std::string config_anchor;
+
   // Config that relates to how we weight silence for (ivector) adaptation
   // this is registered directly to the command line as you might want to
   // play with it in test time.

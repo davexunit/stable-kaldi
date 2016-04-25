@@ -27,7 +27,8 @@ OnlineIvectorExtractionInfo::OnlineIvectorExtractionInfo(
 }
 
 void OnlineIvectorExtractionInfo::Init(
-    const OnlineIvectorExtractionConfig &config) {
+    const OnlineIvectorExtractionConfig &config,
+    const std::string &config_anchor) {
   ivector_period = config.ivector_period;
   num_gselect = config.num_gselect;
   min_post = config.min_post;
@@ -47,22 +48,22 @@ void OnlineIvectorExtractionInfo::Init(
       "in the file supplied to --ivector-extractor-config)";
   if (config.lda_mat_rxfilename == "")
     KALDI_ERR << "--lda-matrix option must be set " << note;
-  ReadKaldiObject(config.lda_mat_rxfilename, &lda_mat);
+  ReadKaldiObject(ParseOptions::ResolvePath(config_anchor, config.lda_mat_rxfilename), &lda_mat);
   if (config.global_cmvn_stats_rxfilename == "")
     KALDI_ERR << "--global-cmvn-stats option must be set " << note;
-  ReadKaldiObject(config.global_cmvn_stats_rxfilename, &global_cmvn_stats);
+  ReadKaldiObject(ParseOptions::ResolvePath(config_anchor, config.global_cmvn_stats_rxfilename), &global_cmvn_stats);
   if (config.cmvn_config_rxfilename == "")
     KALDI_ERR << "--cmvn-config option must be set " << note;
-  ReadConfigFromFile(config.cmvn_config_rxfilename, &cmvn_opts);
+  ReadConfigFromFile(ParseOptions::ResolvePath(config_anchor, config.cmvn_config_rxfilename), &cmvn_opts);
   if (config.splice_config_rxfilename == "")
     KALDI_ERR << "--splice-config option must be set " << note;
-  ReadConfigFromFile(config.splice_config_rxfilename, &splice_opts);
+  ReadConfigFromFile(ParseOptions::ResolvePath(config_anchor, config.splice_config_rxfilename), &splice_opts);
   if (config.diag_ubm_rxfilename == "")
     KALDI_ERR << "--diag-ubm option must be set " << note;
-  ReadKaldiObject(config.diag_ubm_rxfilename, &diag_ubm);
+  ReadKaldiObject(ParseOptions::ResolvePath(config_anchor, config.diag_ubm_rxfilename), &diag_ubm);
   if (config.ivector_extractor_rxfilename == "")
     KALDI_ERR << "--ivector-extractor option must be set " << note;
-  ReadKaldiObject(config.ivector_extractor_rxfilename, &extractor);
+  ReadKaldiObject(ParseOptions::ResolvePath(config_anchor, config.ivector_extractor_rxfilename), &extractor);
   this->Check();
 }
 

@@ -471,8 +471,8 @@ void ParseOptions::PrintConfig(std::ostream &os) {
   os << '\n';
 }
 
-std::string ParseOptions::ResolvePath(const std::string &relative) {
-  if (anchor_dir_ == "")
+std::string ParseOptions::ResolvePath(const std::string &anchor, const std::string &relative) {
+  if (anchor == "")
         return relative;
 
   struct stat info;
@@ -480,14 +480,14 @@ std::string ParseOptions::ResolvePath(const std::string &relative) {
     return relative;
 
   char tmp[PATH_MAX];
-  std::string cat = anchor_dir_ + "/" + relative;
+  std::string cat = anchor + "/" + relative;
   ::realpath(cat.c_str(), tmp);
   return std::string(tmp);
 }
 
 
 void ParseOptions::ReadConfigFile(const std::string &filename) {
-  std::string full_path = ResolvePath(filename);
+  std::string full_path = ResolvePath(anchor_dir_, filename);
 
   std::ifstream is(full_path.c_str(), std::ifstream::in);
   if (!is.good()) {

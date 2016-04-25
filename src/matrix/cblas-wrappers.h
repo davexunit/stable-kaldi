@@ -63,12 +63,34 @@ inline void cblas_Xrot(const int N, double *X, const int incX, double *Y,
 inline float cblas_Xdot(const int N, const float *const X,
                         const int incX, const float *const Y,
                         const int incY) {
+// We have not been able to compile BLAS packages on windows for ARM.
+// So we replace cblas sdot with calls to CLAPACK.
+#ifdef WINDOWS_ARM
+  integer arg1 = N;
+  real arg2 = *X;
+  integer arg3 = incX;
+  real arg4 = *Y;
+  integer arg5 = incY;
+  return sdot_(&arg1, &arg2, &arg3, &arg4, &arg5);
+#else
   return cblas_sdot(N, X, incX, Y, incY);
+#endif
 }
 inline double cblas_Xdot(const int N, const double *const X,
                         const int incX, const double *const Y,
                         const int incY) {
+// We have not been able to compile BLAS packages on windows for ARM.
+// So we replace cblas sdot with calls to CLAPACK.
+#ifdef WINDOWS_ARM
+  integer arg1 = N;
+  real arg2 = *X;
+  integer arg3 = incX;
+  real arg4 = *Y;
+  integer arg5 = incY;
+  return sdot_(&arg1, &arg2, &arg3, &arg4, &arg5);
+#else
   return cblas_ddot(N, X, incX, Y, incY);
+#endif
 }
 inline void cblas_Xaxpy(const int N, const float alpha, const float *X,
                         const int incX, float *Y, const int incY) {

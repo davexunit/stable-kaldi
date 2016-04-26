@@ -32,7 +32,9 @@
 
 #include <sys/types.h>
 #include <sys/stat.h>
+#ifndef _MSC_VER  // Don't try and include this on windows, and ResolvePath won't try and call realpath()
 #include <unistd.h>
+#endif
 
 #include "util/parse-options.h"
 #include "util/text-utils.h"
@@ -479,10 +481,15 @@ std::string ParseOptions::ResolvePath(const std::string &anchor, const std::stri
   if (::stat(relative.c_str(), &info) == 0)
     return relative;
 
+#ifndef _MSC_VER  // Don't call realpath() on windows
   char tmp[PATH_MAX];
   std::string cat = anchor + "/" + relative;
   ::realpath(cat.c_str(), tmp);
   return std::string(tmp);
+#else
+  std::string cat = anchor + "\\" + relative;
+  return cat;
+#endif
 }
 
 

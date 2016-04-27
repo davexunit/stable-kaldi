@@ -39,7 +39,12 @@ typedef float   BaseFloat;
 // we find in the future lacks stdint.h
 #include <stdint.h>
 
-namespace kaldi {
+// these typedefs collide with openfst typedefs that are at the :: level.
+// So far the one compiler that complains is MSVC14, for ARM.
+// So we take away the kaldi namespace when building for rubik.
+#ifndef RUBIK_WINDOWS_ARM
+namespace kaldi{
+#endif
 typedef uint16_t        uint16;
 typedef uint32_t        uint32;
 typedef uint64_t        uint64;
@@ -48,6 +53,7 @@ typedef int32_t         int32;
 typedef int64_t         int64;
 typedef float           float32;
 typedef double         double64;
-}  // end namespace kaldi
-
+#ifndef RUBIK_WINDOWS_ARM
+}
+#endif
 #endif  // KALDI_BASE_KALDI_TYPES_H_

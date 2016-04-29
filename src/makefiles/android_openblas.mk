@@ -19,14 +19,14 @@ $(error OPENBLASROOT not defined.)
 endif
 
  CXXFLAGS += -mhard-float -D_NDK_MATH_NO_SOFTFP=1  -I$(TOOLCHAIN_INCLUDE) -Wall -I.. \
-      -pthread \
+      -pthread -mfpu=neon -ftree-vectorize -mfloat-abi=hard \
 	  -DHAVE_OPENBLAS -I $(OPENBLASROOT)/include \
       -DKALDI_DOUBLEPRECISION=0 -DHAVE_POSIX_MEMALIGN \
       -Wno-sign-compare -Winit-self \
        -DHAVE_CXXABI_H \
       -DHAVE_CLAPACK \
       -I$(FSTROOT)/include \
-      $(EXTRA_CXXFLAGS) -O2\
+      $(EXTRA_CXXFLAGS) -Ofast \
       # -O0 -DKALDI_PARANOID
 
 ifeq ($(KALDI_FLAVOR), dynamic)

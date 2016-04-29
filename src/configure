@@ -70,7 +70,7 @@ function usage {
   echo 'Usage: ./configure [--static|--shared] [--threaded-atlas={yes|no}] [--atlas-root=ATLASROOT] [--fst-root=FSTROOT]
   [--openblas-root=OPENBLASROOOT] [--clapack-root=CLAPACKROOT] [--mkl-root=MKLROOT] [--mkl-libdir=MKLLIBDIR]
   [--omp-libdir=OMPDIR] [--static-fst={yes|no}] [--static-math={yes|no}] [--threaded-math={yes|no}] [--mathlib=ATLAS|MKL|CLAPACK|OPENBLAS]
-  [--use-cuda={yes|no}] [--cudatk-dir=CUDATKDIR] [--android_openblas={yes|no}';
+  [--use-cuda={yes|no}] [--cudatk-dir=CUDATKDIR] [--android_openblas={yes|no} [--linux-arm={yes|no}] [--host=HOST]';
 }
 
 threaded_atlas=false #  By default, use the un-threaded version of ATLAS.
@@ -80,6 +80,8 @@ static_fst=false
 use_cuda=true
 dynamic_kaldi=false
 android_openblas=false
+linux_arm=false
+HOST=""
 
 cmd_line="$0 $@"  # Save the command line to include in kaldi.mk
 
@@ -137,6 +139,10 @@ do
   MATHLIB=`expr "X$1" : '[^=]*=\(.*\)'`; shift ;;
   --android-openblas=yes)
   android_openblas=true; static-fst=yes; shift ;;
+  --linux-arm=yes)
+  linux_arm=true; shift;;
+  --host=*)
+  HOST=`expr "X$1" : '[^=]*=\(.*\)'`-; shift ;;
   --cudatk-dir=*)
   CUDATKDIR=`read_dirname $1`; shift ;; #CUDA is used in src/cudamatrix and src/nnet{,bin} only
   *)  echo "Unknown argument: $1, exiting"; usage; exit 1 ;;
@@ -658,6 +664,36 @@ function linux_configure_dynamic {
   exit_success;
 }
 
+function linux_arm_atlas {
+  if [ -z $ATLASROOT ] ; then
+    echo "ATLASROOT must be set for cross compiles"
+    exit 1;
+  fi
+  if [ -z $HOST ] ; then
+    echo "HOST must be set for cross compiles"
+    exit 1;
+  fi
+
+
+  ATLASLIBDIR="${ATLASROOT}/lib"
+  ATLASLIBS=
+  for x in libcblas.a liblapack.a libf77blas.a libatlas.a; do
+    if [ ! -f $ATLASLIBDIR/$x ]; then
+      echo "Configuring static ATLAS libraries failed: Could not find library $x in directory $ATLASLIBDIR"
+      return 1;
+    fi
+    ATLASLIBS="$ATLASLIBS $ATLASLIBDIR/$x"
+  done
+
+  echo HOST = $HOST >> kaldi.mk
+  echo ATLASINC = $ATLASROOT/include >> kaldi.mk
+  echo ATLASLIBS = $ATLASLIBS >> kaldi.mk
+  cat makefiles/linux_arm_atlas.mk >> kaldi.mk
+  echo "Successfully configured for Linux on ARM using static libraries with ATLASLIBS =$ATLASLIBS"
+  echo "SUCCESS"
+  exit 0;
+}
+
 echo "Configuring ..."
 
 if [ ! -f makefiles/common.mk ]; then
@@ -790,6 +826,7 @@ if [ "`uname -o`" == "Cygwin"  ]; then
     exit_success;
 fi
 
+
 if [ "`uname`" == "Linux" ]; then
   if  $static_fst ; then
       OPENFSTLIBS="$FSTROOT/lib/libfst.a"
@@ -799,6 +836,7 @@ if [ "`uname`" == "Linux" ]; then
       OPENFSTLDFLAGS="-Wl,-rpath=${FSTROOT}/lib"
       fst_type='so'
   fi
+
   if [ ! -f "$FSTROOT/lib/libfst.${fst_type}" ]; then
     failure "Static=[$static_fst] OpenFST library not found:  See ../tools/INSTALL"
   fi
@@ -822,6 +860,10 @@ if [ "`uname`" == "Linux" ]; then
     # covered.  We saw a case where there was a directory called /usr/lib/atlas
     # containing {liblapack.a,libblas.a}, and linking against just these two
     # libraries worked.
+
+    if $linux_arm; then
+      linux_arm_atlas
+    fi
 
     if $static_math; then
       # Prefer static to dynamic math.

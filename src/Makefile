@@ -39,7 +39,7 @@ libs: checkversion test_dependencies kaldi.mk $(SUBDIRS_LIB)
 ITF_HEADERS = $(shell ls itf/*.h)
 
 install_libs: libs
-	-for x in $(ITF_HEADERS); do install -D -m 0644 $$x $(PREFIX)/include/$$x
+	-for x in $(ITF_HEADERS); do install -D -m 0644 $$x $(PREFIX)/include/$$x; done
 	-for x in $(SUBDIRS_LIB); do $(MAKE) -C $$x $@; done
 
 install: install_libs all

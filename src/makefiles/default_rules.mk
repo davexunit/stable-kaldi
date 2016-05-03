@@ -29,6 +29,10 @@ else
   XDEPENDS = $(ADDLIBS)
 endif
 
+HEADERS = $(shell ls *.h)
+
+INC_DIR = $(shell basename $(CURDIR))
+
 all: $(LIBFILE) $(BINFILES)
 
 $(LIBFILE): $(OBJFILES)
@@ -53,6 +57,13 @@ endif
 
 $(BINFILES): $(LIBFILE) $(XDEPENDS)
 
+install_libs: $(LIBFILE)
+	-for x in $(LIBFILE);  do install -D -m 0644 $$x $(PREFIX)/lib/$$x; done
+	-for x in $(HEADERS); do install -D -m 0644 $$x $(PREFIX)/include/$(INC_DIR)/$$x; done
+
+install: $(BINFILES) install_libs
+	-for x in $(BINFILES); do install -D -m 0755 $$x $(PREFIX)/bin/$$x; done
+
 
 # Rule below would expand to, e.g.:
 # ../base/kaldi-base.a:
@@ -70,7 +81,7 @@ clean:
 $(TESTFILES): $(LIBFILE) $(XDEPENDS)
 
 test_compile: $(TESTFILES)
-  
+
 test: test_compile
 	@result=0; for x in $(TESTFILES); do printf "Running $$x ..."; ./$$x >/dev/null 2>&1; if [ $$? -ne 0 ]; then echo "... FAIL $$x"; result=1; else echo "... SUCCESS";  fi;  done; exit $$result
 
@@ -78,7 +89,7 @@ test: test_compile
 
 
 depend:
-	-$(CXX) -M $(CXXFLAGS) *.cc > .depend.mk  
+	-$(CXX) -M $(CXXFLAGS) *.cc > .depend.mk
 
 # removing automatic making of "depend" as it's quite slow.
 #.depend.mk: depend

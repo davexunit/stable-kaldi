@@ -59,6 +59,7 @@ fi
 MATHLIB='ATLAS'
 ATLASROOT=`rel2abs ../tools/ATLAS/`
 FSTROOT=`rel2abs ../tools/openfst`
+PREFIX=/usr/local/
 
 # Avoid using any variables that are set in the shell.
 unset MKLROOT
@@ -70,7 +71,8 @@ function usage {
   echo 'Usage: ./configure [--static|--shared] [--threaded-atlas={yes|no}] [--atlas-root=ATLASROOT] [--fst-root=FSTROOT]
   [--openblas-root=OPENBLASROOOT] [--clapack-root=CLAPACKROOT] [--mkl-root=MKLROOT] [--mkl-libdir=MKLLIBDIR]
   [--omp-libdir=OMPDIR] [--static-fst={yes|no}] [--static-math={yes|no}] [--threaded-math={yes|no}] [--mathlib=ATLAS|MKL|CLAPACK|OPENBLAS]
-  [--use-cuda={yes|no}] [--cudatk-dir=CUDATKDIR] [--android_openblas={yes|no} [--linux-arm={yes|no}] [--host=HOST]';
+  [--use-cuda={yes|no}] [--cudatk-dir=CUDATKDIR] [--android_openblas={yes|no} [--linux-arm={yes|no}] [--host=HOST]
+  [--prefix=PREFIXDIR]';
 }
 
 threaded_atlas=false #  By default, use the un-threaded version of ATLAS.
@@ -143,6 +145,9 @@ do
   linux_arm=true; shift;;
   --host=*)
   HOST=`expr "X$1" : '[^=]*=\(.*\)'`-; shift ;;
+  --prefix=*)
+  # Don't use read_dirname, because prefix does not need to exist yet, we will create it
+  PREFIX=`expr "X$1" : '[^=]*=\(.*\)'`; shift ;;
   --cudatk-dir=*)
   CUDATKDIR=`read_dirname $1`; shift ;; #CUDA is used in src/cudamatrix and src/nnet{,bin} only
   *)  echo "Unknown argument: $1, exiting"; usage; exit 1 ;;
@@ -729,6 +734,7 @@ echo "KALDILIBDIR := $KALDILIBDIR" >> kaldi.mk
 fi
 echo "CONFIGURE_VERSION := $CONFIGURE_VERSION" >> kaldi.mk
 echo "FSTROOT = $FSTROOT" >> kaldi.mk
+echo "PREFIX = $PREFIX" >> kaldi.mk
 
 # Check installed OpenFst version and add C++11 flags if OpenFst >= 1.4
 OPENFST_VER=1.3.4

@@ -35,10 +35,14 @@ all: checkversion test_dependencies kaldi.mk mklibdir $(SUBDIRS)
 
 libs: checkversion test_dependencies kaldi.mk $(SUBDIRS_LIB)
 
+# The itf dir has no code beyond headers, so it has no makefile, handle it here
+ITF_HEADERS = $(shell ls itf/*.h)
+
 install_libs: libs
+	-for x in $(ITF_HEADERS); do install -D -m 0644 $$x $(PREFIX)/include/$$x
 	-for x in $(SUBDIRS_LIB); do $(MAKE) -C $$x $@; done
 
-install: all
+install: install_libs all
 	-for x in $(SUBDIRS); do $(MAKE) -C $$x $@; done
 
 mklibdir:

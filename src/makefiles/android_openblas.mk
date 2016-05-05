@@ -6,10 +6,6 @@ ifndef OPENFSTLIBS
 $(error OPENFSTLIBS not defined.)
 endif
 
-ifndef TOOLCHAIN_INCLUDE
-$(error TOOLCHAIN_INCLUDE not defined.)
-endif
-
 ifndef OPENBLASLIBS
 $(error OPENBLASLIBS not defined.)
 endif
@@ -18,7 +14,11 @@ ifndef OPENBLASROOT
 $(error OPENBLASROOT not defined.)
 endif
 
- CXXFLAGS += -mhard-float -D_NDK_MATH_NO_SOFTFP=1  -I$(TOOLCHAIN_INCLUDE) -Wall -I.. \
+ifndef HOST
+$(error HOST not defined.)
+endif
+
+ CXXFLAGS += -mhard-float -D_NDK_MATH_NO_SOFTFP=1  -Wall -I.. \
       -pthread -mfpu=neon -ftree-vectorize -mfloat-abi=hard \
 	  -DHAVE_OPENBLAS -I $(OPENBLASROOT)/include \
       -DKALDI_DOUBLEPRECISION=0 -DHAVE_POSIX_MEMALIGN \
@@ -35,6 +35,12 @@ endif
 
 LDFLAGS = -Wl,--no-warn-mismatch -pie
 LDLIBS = $(EXTRA_LDLIBS) $(OPENFSTLIBS) $(OPENBLASLIBS) -ldl -lm_hard
+
+CC = $(HOST)g++
+CXX = $(HOST)g++
+AR = $(HOST)ar
+AS = $(HOST)as
+RANLIB = $(HOST)ranlib
 
 # Add no-mismatched-tags flag to suppress the annoying clang warnings
 # that are perfectly valid per spec.
@@ -53,3 +59,5 @@ endif
 ifeq ($(findstring GCC,$(COMPILER)),GCC)
 	CXXFLAGS += -flax-vector-conversions -Wno-unused-local-typedefs
 endif
+
+

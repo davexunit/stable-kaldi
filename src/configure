@@ -140,7 +140,7 @@ do
   --mathlib=*)
   MATHLIB=`expr "X$1" : '[^=]*=\(.*\)'`; shift ;;
   --android-openblas=yes)
-  android_openblas=true; static-fst=yes; shift ;;
+  android_openblas=true; static_fst=true; shift ;;
   --linux-arm=yes)
   linux_arm=true; shift;;
   --host=*)
@@ -751,6 +751,11 @@ if $android_openblas ; then
   OPENFSTLIBS="$FSTROOT/lib/libfst.a"
   echo "OPENFSTLIBS = $OPENFSTLIBS" >> kaldi.mk
 
+  if [ -z $HOST ] ; then
+    echo "HOST must be set for cross compiles"
+    exit 1;
+  fi
+
   OPENBLASROOT=`rel2abs "$OPENBLASROOT"`
   if [ -z "$OPENBLASROOT" ]; then
     failure "Must specify the location of OPENBLAS with --openblas-root option (and it must exist)"
@@ -763,6 +768,7 @@ if $android_openblas ; then
   OPENBLASLIBS="$OPENBLASROOT/lib/libopenblas.a $OPENBLASROOT/lib/libclapack.a $OPENBLASROOT/lib/liblapack.a $OPENBLASROOT/lib/libblas.a $OPENBLASROOT/lib/libf2c.a"
   echo "OPENBLASROOT = $OPENBLASROOT" >> kaldi.mk
   echo "OPENBLASLIBS = $OPENBLASLIBS" >> kaldi.mk
+  echo HOST = $HOST >> kaldi.mk
 
   cat makefiles/android_openblas.mk >> kaldi.mk
 

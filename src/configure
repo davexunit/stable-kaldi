@@ -66,13 +66,14 @@ unset MKLROOT
 unset CLAPACKROOT
 unset OPENBLASROOT
 unset MKLLIBDIR
+unset TOOLCHAININC
 
 function usage {
   echo 'Usage: ./configure [--static|--shared] [--threaded-atlas={yes|no}] [--atlas-root=ATLASROOT] [--fst-root=FSTROOT]
   [--openblas-root=OPENBLASROOOT] [--clapack-root=CLAPACKROOT] [--mkl-root=MKLROOT] [--mkl-libdir=MKLLIBDIR]
   [--omp-libdir=OMPDIR] [--static-fst={yes|no}] [--static-math={yes|no}] [--threaded-math={yes|no}] [--mathlib=ATLAS|MKL|CLAPACK|OPENBLAS]
   [--use-cuda={yes|no}] [--cudatk-dir=CUDATKDIR] [--android_openblas={yes|no} [--linux-arm={yes|no}] [--host=HOST]
-  [--prefix=PREFIXDIR]';
+  [--prefix=PREFIXDIR] [--toolchain-includes=*]';
 }
 
 threaded_atlas=false #  By default, use the un-threaded version of ATLAS.
@@ -148,6 +149,8 @@ do
   --prefix=*)
   # Don't use read_dirname, because prefix does not need to exist yet, we will create it
   PREFIX=`expr "X$1" : '[^=]*=\(.*\)'`; shift ;;
+  --toolchain-includes=*)
+  TOOLCHAININC=`read_dirname $1`; shift ;;
   --cudatk-dir=*)
   CUDATKDIR=`read_dirname $1`; shift ;; #CUDA is used in src/cudamatrix and src/nnet{,bin} only
   *)  echo "Unknown argument: $1, exiting"; usage; exit 1 ;;
@@ -751,6 +754,11 @@ if $android_openblas ; then
   OPENFSTLIBS="$FSTROOT/lib/libfst.a"
   echo "OPENFSTLIBS = $OPENFSTLIBS" >> kaldi.mk
 
+  if [ -z $TOOLCHAININC ] ;  then
+	  echo "--toolchain-includes must be specified"
+	  exit 1;
+  fi
+
   if [ -z $HOST ] ; then
     echo "HOST must be set for cross compiles"
     exit 1;
@@ -768,7 +776,8 @@ if $android_openblas ; then
   OPENBLASLIBS="$OPENBLASROOT/lib/libopenblas.a $OPENBLASROOT/lib/libclapack.a $OPENBLASROOT/lib/liblapack.a $OPENBLASROOT/lib/libblas.a $OPENBLASROOT/lib/libf2c.a"
   echo "OPENBLASROOT = $OPENBLASROOT" >> kaldi.mk
   echo "OPENBLASLIBS = $OPENBLASLIBS" >> kaldi.mk
-  echo HOST = $HOST >> kaldi.mk
+  echo "HOST = $HOST" >> kaldi.mk
+  echo "TOOLCHAININC = $TOOLCHAININC" >> kaldi.mk
 
   cat makefiles/android_openblas.mk >> kaldi.mk
 

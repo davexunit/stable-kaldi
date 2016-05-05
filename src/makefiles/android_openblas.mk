@@ -14,13 +14,18 @@ ifndef OPENBLASROOT
 $(error OPENBLASROOT not defined.)
 endif
 
+ifndef TOOLCHAININC
+$(error TOOLCHAININC not defined.)
+endif
+
 ifndef HOST
 $(error HOST not defined.)
 endif
 
  CXXFLAGS += -mhard-float -D_NDK_MATH_NO_SOFTFP=1  -Wall -I.. \
       -pthread -mfpu=neon -ftree-vectorize -mfloat-abi=hard \
-	  -DHAVE_OPENBLAS -I $(OPENBLASROOT)/include \
+      -DHAVE_OPENBLAS -I $(OPENBLASROOT)/include \
+      -I$(TOOLCHAININC) \
       -DKALDI_DOUBLEPRECISION=0 -DHAVE_POSIX_MEMALIGN \
       -Wno-sign-compare -Winit-self \
        -DHAVE_CXXABI_H \

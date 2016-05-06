@@ -7,7 +7,6 @@ TOOLCHAIN_INCLUDE=${3:-/tmp/my-android-toolchain/sysroot/usr/include/}
 OPENBLAS_ROOT=${4:-/opt/arm-tools}
 
 export TOOLCHAIN_PREFIX=$TOOLCHAIN_PREFIX
-export TOOLCHAIN_INCLUDE=$TOOLCHAIN_INCLUDE
 
 export CPP=${TOOLCHAIN_PREFIX}-cpp
 export AR=${TOOLCHAIN_PREFIX}-ar
@@ -18,8 +17,8 @@ export CXX=${TOOLCHAIN_PREFIX}-g++
 export LD=${TOOLCHAIN_PREFIX}-ld
 export RANLIB=${TOOLCHAIN_PREFIX}-ranlib
 
-./configure --android-openblas=yes --fst-root=/opt/arm-tools/ --openblas-root=$OPENBLAS_ROOT
+./configure --android-openblas=yes --fst-root=/opt/arm-tools/ --openblas-root=$OPENBLAS_ROOT \
+	--toolchain-includes=$TOOLCHAIN_INCLUDE --prefix=$INSTALL_PREFIX
 
-make -j7
-make install
-python ../install_kaldi.py . $INSTALL_PREFIX
+make libs -j7
+make install_libs

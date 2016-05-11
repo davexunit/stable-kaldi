@@ -1333,7 +1333,7 @@ inline void AppendVector(const VectorBase<Real> &src, Vector<Real> *dst) {
   dst->Range(dst->Dim() - src.Dim(), src.Dim()).CopyFromVec(src);
 }
 
-const int32 OnlineProcessPitch::kRawFeatureDim;
+enum { kRawFeatureDim = 2 };  // use this to avoid redefining kRawFeatureDim
 
 /**
    Note on the implementation of OnlineProcessPitch: the

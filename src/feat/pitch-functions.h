@@ -346,8 +346,8 @@ class OnlineProcessPitch: public OnlineFeatureInterface {
                      OnlineFeatureInterface *src);
 
  private:
-  //static const int32 kRawFeatureDim = 2;  // input: (nccf, pitch)
-  enum { kRawFeatureDim = 2 };  // use this to avoid redefining kRawFeatureDim
+  static const int32 kRawFeatureDim = 2;  // input: (nccf, pitch)
+  
 
   ProcessPitchOptions opts_;
   OnlineFeatureInterface *src_;

@@ -1334,7 +1334,7 @@ inline void AppendVector(const VectorBase<Real> &src, Vector<Real> *dst) {
 }
 
 //const int32 OnlineProcessPitch::kRawFeatureDim;
- enum { kRawFeatureDim = 2 };   //using this to avoid redifining KRawFeatureDim
+ enum { kRawFeatureDim = 2 };   //using this to avoid redefining KRawFeatureDim
 
 /**
    Note on the implementation of OnlineProcessPitch: the

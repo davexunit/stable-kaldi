@@ -21,16 +21,17 @@
 #ifndef KALDI_THREAD_KALDI_MUTEX_H_
 #define KALDI_THREAD_KALDI_MUTEX_H_ 1
 
+#ifndef NO_PTHREAD
 #include <pthread.h>
 
 namespace kaldi {
 
 /**
- * This class encapsulates mutex to ensure 
+ * This class encapsulates mutex to ensure
  * exclusive access to some critical section
  * which manipulates shared resources.
  *
- * Note.: The mutex MUST BE UNLOCKED from 
+ * Note.: The mutex MUST BE UNLOCKED from
  * the SAME THREAD which has locked it!
  */
 class Mutex {
@@ -46,14 +47,57 @@ class Mutex {
    *         false when mutex was already locked
    */
   bool TryLock();
-  
+
   void Unlock();
 
  private:
   pthread_mutex_t mutex_;
-  KALDI_DISALLOW_COPY_AND_ASSIGN(Mutex);  
+  KALDI_DISALLOW_COPY_AND_ASSIGN(Mutex);
+};
+} // namespace kaldi
+#else // no pthread
+namespace kaldi {
+
+/**
+ * This class encapsulates mutex to ensure
+ * exclusive access to some critical section
+ * which manipulates shared resources.
+ *
+ * Note.: The mutex MUST BE UNLOCKED from
+ * the SAME THREAD which has locked it!
+ */
+class Mutex {
+ public:
+  Mutex()
+  {
+    throw std::runtime_error("Mutex, cannot be used when NO_PTHREAD macro defined.");
+  }
+  ~Mutex() {}
+
+  void Lock()
+  {
+      throw std::runtime_error("Mutex cannot be used when NO_PTHREAD macro defined");
+  }
+
+  /**
+   * Try to lock the mutex without waiting for it.
+   * Returns: true when lock successfull,
+   *         false when mutex was already locked
+   */
+  bool TryLock()
+  {
+      throw std::runtime_error("Mutex cannot be used when NO_PTHREAD macro defined");
+  }
+
+  void Unlock()
+  {
+      throw std::runtime_error("Mutex cannot be used when NO_PTHREAD macro defined");
+  }
+
 };
 
 } // namespace kaldi
+#endif
+
 
 #endif // KALDI_THREAD_KALDI_MUTEX_H_

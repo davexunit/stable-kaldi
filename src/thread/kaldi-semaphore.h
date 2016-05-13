@@ -21,30 +21,31 @@
 #ifndef KALDI_THREAD_KALDI_SEMAPHORE_H_
 #define KALDI_THREAD_KALDI_SEMAPHORE_H_ 1
 
+#ifndef NO_PTHREAD
 #include <pthread.h>
 
 namespace kaldi {
-  
+
 class Semaphore {
  public:
-  Semaphore(int32 initValue = 0); 
+  Semaphore(int32 initValue = 0);
   ~Semaphore();
 
   bool TryWait(); ///< Returns true if Wait() goes through
   void Wait(); ///< decrease the counter
   void Signal(); ///< increase the counter
-  
+
   /**
-   * returns the counter value, 
+   * returns the counter value,
    * zero means no resources, the Wait() will block
-   */ 
+   */
   int32 GetValue() {
-    return counter_; 
+    return counter_;
   }
 
  private:
-  int32 counter_; ///< the semaphore counter, 0 means block on Wait() 
-  
+  int32 counter_; ///< the semaphore counter, 0 means block on Wait()
+
   pthread_mutex_t mutex_;
   pthread_cond_t cond_;
   KALDI_DISALLOW_COPY_AND_ASSIGN(Semaphore);
@@ -54,4 +55,43 @@ class Semaphore {
 
 } //namespace
 
+#else
+
+namespace kaldi {
+
+class Semaphore {
+ public:
+  Semaphore(int32 initValue = 0)
+  {
+    throw std::runtime_error("Semaphore, cannot be used when NO_PTHREAD macro defined.");
+  }
+  ~Semaphore(){}
+
+  bool TryWait() ///< Returns true if Wait() goes through
+  {
+    throw std::runtime_error("Semaphore, cannot be used when NO_PTHREAD macro defined.");
+  }
+  void Wait() ///< decrease the counter
+  {
+    throw std::runtime_error("Semaphore, cannot be used when NO_PTHREAD macro defined.");
+  }
+  void Signal() ///< increase the counter
+  {
+    throw std::runtime_error("Semaphore, cannot be used when NO_PTHREAD macro defined.");
+  }
+
+  /**
+   * returns the counter value,
+   * zero means no resources, the Wait() will block
+   */
+  int32 GetValue() {
+      throw std::runtime_error("Semaphore, cannot be used when NO_PTHREAD macro defined.");
+  }
+
+};
+
+
+
+} //namespace
+#endif
 #endif // KALDI_THREAD_KALDI_SEMAPHORE_H_

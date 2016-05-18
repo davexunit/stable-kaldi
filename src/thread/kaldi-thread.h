@@ -173,7 +173,7 @@ class MultiThreader {
 template<class C> void RunMultiThreaded(const C &c_in) {
   MultiThreader<C> m(g_num_threads, c_in);
 }
-
+}
 #else // NO_PTHREAD
 
 #include "thread/kaldi-barrier.h"

@@ -3,8 +3,7 @@
   <ImportGroup Label="PropertySheets" />
   <PropertyGroup Label="UserMacros">
     <MKLDIR>C:\Program Files (x86)\Intel\Composer XE\mkl</MKLDIR>
-    <OPENBLASDIR>C:\kaldi\tools\OpenBLAS-v0.2.14-Win64-int32</OPENBLASDIR>
-    <PTHREADW>C:\kaldi\tools\pthread\Pre-built.2</PTHREADW>
+    <OPENBLASDIR>C:\kaldi\tools\OpenBLAS-v0.2.14-Win32</OPENBLASDIR>
     <OPENFST>C:\kaldi\tools\openfst\</OPENFST>
     <OPENFSTLIB>C:\opt\local\lib\</OPENFSTLIB>
   </PropertyGroup>
@@ -13,10 +12,6 @@
   <ItemGroup>
     <BuildMacro Include="OPENBLASDIR">
       <Value>$(OPENBLASDIR)</Value>
-      <EnvironmentVariable>true</EnvironmentVariable>
-    </BuildMacro>
-    <BuildMacro Include="PTHREADW">
-      <Value>$(PTHREADW)</Value>
       <EnvironmentVariable>true</EnvironmentVariable>
     </BuildMacro>
     <BuildMacro Include="OPENFST">

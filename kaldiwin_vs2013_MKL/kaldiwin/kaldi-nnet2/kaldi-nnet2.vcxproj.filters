@@ -40,9 +40,6 @@
     <ClCompile Include="..\..\..\src\nnet2\nnet-component.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\nnet2\nnet-compute-discriminative-parallel.cc">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\src\nnet2\nnet-compute-discriminative.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -95,12 +92,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\src\nnet2\train-nnet-ensemble.cc">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\nnet2\train-nnet-perturbed.cc">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\nnet2\train-nnet.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\src\nnet2\widen-nnet.cc">

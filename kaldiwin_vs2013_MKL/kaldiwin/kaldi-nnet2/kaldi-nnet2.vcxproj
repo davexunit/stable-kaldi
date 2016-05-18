@@ -141,7 +141,6 @@
     <ClCompile Include="..\..\..\src\nnet2\get-feature-transform.cc" />
     <ClCompile Include="..\..\..\src\nnet2\mixup-nnet.cc" />
     <ClCompile Include="..\..\..\src\nnet2\nnet-component.cc" />
-    <ClCompile Include="..\..\..\src\nnet2\nnet-compute-discriminative-parallel.cc" />
     <ClCompile Include="..\..\..\src\nnet2\nnet-compute-discriminative.cc" />
     <ClCompile Include="..\..\..\src\nnet2\nnet-compute-online.cc" />
     <ClCompile Include="..\..\..\src\nnet2\nnet-compute.cc" />
@@ -160,8 +159,6 @@
     <ClCompile Include="..\..\..\src\nnet2\rescale-nnet.cc" />
     <ClCompile Include="..\..\..\src\nnet2\shrink-nnet.cc" />
     <ClCompile Include="..\..\..\src\nnet2\train-nnet-ensemble.cc" />
-    <ClCompile Include="..\..\..\src\nnet2\train-nnet-perturbed.cc" />
-    <ClCompile Include="..\..\..\src\nnet2\train-nnet.cc" />
     <ClCompile Include="..\..\..\src\nnet2\widen-nnet.cc" />
   </ItemGroup>
   <ItemGroup>

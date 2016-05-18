@@ -21,7 +21,7 @@
 #ifndef KALDI_THREAD_KALDI_BARRIER_H_
 #define KALDI_THREAD_KALDI_BARRIER_H_ 1
 
-
+#ifndef NO_PTHREAD
 #include <pthread.h>
 
 
@@ -29,7 +29,7 @@ namespace kaldi {
 
 /**
  * The Barrier class
- * A barrier causes a group of threads to wait until 
+ * A barrier causes a group of threads to wait until
  * all the threads reach the "barrier".
  */
 class Barrier {
@@ -41,7 +41,7 @@ class Barrier {
   int32 Wait(); ///< last thread returns -1, the others 0
 
  private:
-  pthread_mutex_t     mutex_;     ///< Mutex which control access to barrier 
+  pthread_mutex_t     mutex_;     ///< Mutex which control access to barrier
   pthread_cond_t      cv_;        ///< Conditional variable to make barrier wait
 
   int32                 threshold_; ///< size of thread-group
@@ -52,6 +52,32 @@ class Barrier {
 };
 
 } // namespace kaldi
+
+#else // no pthread, this is primarily for windows.
+
+namespace kaldi {
+
+/**
+ * runtime code on windows do not use this class, we do not use research tools in windows systems
+ */
+class Barrier {
+ public:
+  Barrier(int32 threshold=0)
+  {
+      throw std::runtime_error("Barrier, cannot be used when NO_PTHREAD macro defined.");
+  }
+  ~Barrier() {}
+
+  void SetThreshold(int32 thr) ///< number of threads to wait for
+  {
+      throw std::runtime_error("Barrier, cannot be used when NO_PTHREAD macro defined.");
+  }
+  int32 Wait()
+  {
+      throw std::runtime_error("Barrier, cannot be used when NO_PTHREAD macro defined.");
+  }
+};
+#endif
 
 #endif // KALDI_THREAD_KALDI_BARRIER_H_
 

@@ -34,9 +34,6 @@
     <ClCompile Include="..\..\..\src\online2\online-ivector-feature.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\online2\online-nnet2-decoding-threaded.cc">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\src\online2\online-nnet2-decoding.cc">
       <Filter>Source Files</Filter>
     </ClCompile>

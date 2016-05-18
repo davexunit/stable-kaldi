@@ -18,7 +18,6 @@
 #include <vector>
 
 #include "ivector/ivector-extractor.h"
-#include "thread/kaldi-task-sequence.h"
 
 namespace kaldi {
 

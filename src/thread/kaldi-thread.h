@@ -207,7 +207,7 @@ template<class C> void RunMultiThreaded(const C &c_in) {
 
 namespace kaldi {
 
-extern int32 g_num_threads;  // Maximum number of threads (for programs that
+int32 g_num_threads;  // Maximum number of threads (for programs that
 // use threads, which is not many of them, e.g. the SGMM update program does.
 // This is 8 by default.  You can change this on the command line, where
 // used, with --num-threads.  Programs that think they will use threads
@@ -273,7 +273,7 @@ template<class C>
 class MultiThreader {
  public:
   MultiThreader(int32 num_threads,
-                const C &c_in):
+                const C &c_in)
   {
       throw std::runtime_error("MultiThreader, cannot be used when NO_PTHREAD macro defined.");
   }
@@ -288,8 +288,6 @@ template<class C> void RunMultiThreaded(const C &c_in) {
   MultiThreader<C> m(g_num_threads, c_in);
 }
 
-
-#endif
-
 } // namespace kaldi
+#endif // NO_PTHREAD
 #endif  // KALDI_THREAD_KALDI_THREAD_H_

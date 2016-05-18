@@ -56,6 +56,7 @@ class Mutex {
 };
 } // namespace kaldi
 #else // no pthread
+#include <mutex>
 namespace kaldi {
 
 /**
@@ -68,15 +69,16 @@ namespace kaldi {
  */
 class Mutex {
  public:
-  Mutex()
-  {
-    throw std::runtime_error("Mutex, cannot be used when NO_PTHREAD macro defined.");
-  }
+  Mutex() : mLock(NULL) {}
   ~Mutex() {}
 
   void Lock()
   {
-      throw std::runtime_error("Mutex cannot be used when NO_PTHREAD macro defined");
+	  if (mLock != NULL)
+	  {
+		  throw std::runtime_error("Lock defined and possibly in use.");
+	  }
+	  mLock = new std::lock_guard<std::mutex>(mMutex);
   }
 
   /**
@@ -91,9 +93,16 @@ class Mutex {
 
   void Unlock()
   {
-      throw std::runtime_error("Mutex cannot be used when NO_PTHREAD macro defined");
+	  if (mLock == NULL)
+	  {
+		  throw std::runtime_error("tryign to unlock null lock.");
+	  }
+	  delete mLock;
+	  mLock = NULL;
   }
-
+private:
+	std::lock_guard<std::mutex> *mLock;
+	std::mutex mMutex;
 };
 
 } // namespace kaldi

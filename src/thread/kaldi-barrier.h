@@ -57,26 +57,27 @@ class Barrier {
 
 namespace kaldi {
 
-/**
- * runtime code on windows do not use this class, we do not use research tools in windows systems
- */
-class Barrier {
- public:
-  Barrier(int32 threshold=0)
-  {
-      throw std::runtime_error("Barrier, cannot be used when NO_PTHREAD macro defined.");
-  }
-  ~Barrier() {}
+	/**
+	 * runtime code on windows do not use this class, we do not use research tools in windows systems
+	 */
+	class Barrier {
+	public:
+		Barrier(int32 threshold = 0)
+		{
+			throw std::runtime_error("Barrier, cannot be used when NO_PTHREAD macro defined.");
+		}
+		~Barrier() {}
 
-  void SetThreshold(int32 thr) ///< number of threads to wait for
-  {
-      throw std::runtime_error("Barrier, cannot be used when NO_PTHREAD macro defined.");
-  }
-  int32 Wait()
-  {
-      throw std::runtime_error("Barrier, cannot be used when NO_PTHREAD macro defined.");
-  }
-};
+		void SetThreshold(int32 thr) ///< number of threads to wait for
+		{
+			throw std::runtime_error("Barrier, cannot be used when NO_PTHREAD macro defined.");
+		}
+		int32 Wait()
+		{
+			throw std::runtime_error("Barrier, cannot be used when NO_PTHREAD macro defined.");
+		}
+	};
+}
 #endif
 
 #endif // KALDI_THREAD_KALDI_BARRIER_H_

@@ -42,18 +42,19 @@ struct FasterDecoderOptions {
                                           // alignment, use small default.
                           beam_delta(0.5),
                           hash_ratio(2.0) { }
-  void Register(OptionsItf *po, bool full) {  /// if "full", use obscure
+  void Register(OptionsItf *opts, bool full) {  /// if "full", use obscure
     /// options too.
     /// Depends on program.
-    po->Register("beam", &beam, "Decoder beam");
-    po->Register("max-active", &max_active, "Decoder max active states.");
-    po->Register("min-active", &min_active,
-                 "Decoder min active states (don't prune if #active less than this).");
+    opts->Register("beam", &beam, "Decoding beam.  Larger->slower, more accurate.");
+    opts->Register("max-active", &max_active, "Decoder max active states.  Larger->slower; "
+                   "more accurate");
+    opts->Register("min-active", &min_active,
+                   "Decoder min active states (don't prune if #active less than this).");
     if (full) {
-      po->Register("beam-delta", &beam_delta,
-                   "Increment used in decoder [obscure setting]");
-      po->Register("hash-ratio", &hash_ratio,
-                   "Setting used in decoder to control hash behavior");
+      opts->Register("beam-delta", &beam_delta,
+                     "Increment used in decoder [obscure setting]");
+      opts->Register("hash-ratio", &hash_ratio,
+                     "Setting used in decoder to control hash behavior");
     }
   }
 };
@@ -69,7 +70,7 @@ class FasterDecoder {
                 const FasterDecoderOptions &config);
 
   void SetOptions(const FasterDecoderOptions &config) { config_ = config; }
-  
+
   ~FasterDecoder() { ClearToks(toks_.Clear()); }
 
   void Decode(DecodableInterface *decodable);
@@ -83,13 +84,13 @@ class FasterDecoder {
   /// final-probs. Returns true if the output best path was not the empty
   /// FST (will only return false in unusual circumstances where
   /// no tokens survived).
-  bool GetBestPath(fst::MutableFst<LatticeArc> *fst_out, 
+  bool GetBestPath(fst::MutableFst<LatticeArc> *fst_out,
                    bool use_final_probs = true);
 
   /// As a new alternative to Decode(), you can call InitDecoding
   /// and then (possibly multiple times) AdvanceDecoding().
   void InitDecoding();
-  
+
 
   /// This will decode until there are no more frames ready in the decodable
   /// object, but if max_num_frames is >= 0 it will decode no more than
@@ -97,8 +98,10 @@ class FasterDecoder {
   void AdvanceDecoding(DecodableInterface *decodable,
                        int32 max_num_frames = -1);
 
-  /// Returns the number of frames already decoded.  
+  /// Returns the number of frames already decoded.
   int32 NumFramesDecoded() const { return num_frames_decoded_; }
+
+ protected:
 
  public:
   class Token {

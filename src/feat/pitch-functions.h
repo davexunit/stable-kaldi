@@ -6,6 +6,8 @@
 //                     Daniel Povey, Korbinian Riedhammer
 //                     Xin Lei
 
+// See ../../COPYING for clarification regarding multiple authors
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -130,78 +132,80 @@ struct PitchExtractionOptions {
       nccf_ballast_online(false),
       snip_edges(true) { }
 
-  void Register(OptionsItf *po) {
-    po->Register("sample-frequency", &samp_freq,
-                 "Waveform data sample frequency (must match the waveform "
-                 "file, if specified there)");
-    po->Register("frame-length", &frame_length_ms, "Frame length in "
-                 "milliseconds");
-    po->Register("frame-shift", &frame_shift_ms, "Frame shift in milliseconds");
-    po->Register("preemphasis-coefficient", &preemph_coeff,
-                 "Coefficient for use in signal preemphasis (deprecated)");
-    po->Register("min-f0", &min_f0,
-                 "min. F0 to search for (Hz)");
-    po->Register("max-f0", &max_f0,
-                 "max. F0 to search for (Hz)");
-    po->Register("soft-min-f0", &soft_min_f0,
-                 "Minimum f0, applied in soft way, must not exceed min-f0");
-    po->Register("penalty-factor", &penalty_factor,
-                 "cost factor for FO change.");
-    po->Register("lowpass-cutoff", &lowpass_cutoff,
-                 "cutoff frequency for LowPass filter (Hz) ");
-    po->Register("resample-frequency", &resample_freq,
-                 "Frequency that we down-sample the signal to.  Must be "
-                 "more than twice lowpass-cutoff");
-    po->Register("delta-pitch", &delta_pitch,
-                 "Smallest relative change in pitch that our algorithm "
-                 "measures");
-    po->Register("nccf-ballast", &nccf_ballast,
-                 "Increasing this factor reduces NCCF for quiet frames");
-    po->Register("nccf-ballast-online", &nccf_ballast_online,
-                 "This is useful mainly for debug; it affects how the NCCF "
-                 "ballast is computed.");
-    po->Register("lowpass-filter-width", &lowpass_filter_width,
-                 "Integer that determines filter width of "
-                 "lowpass filter, more gives sharper filter");
-    po->Register("upsample-filter-width", &upsample_filter_width,
-                 "Integer that determines filter width when upsampling NCCF");
-    po->Register("frames-per-chunk", &frames_per_chunk, "Only relevant for "
-                 "offline pitch extraction (e.g. compute-kaldi-pitch-feats), "
-                 "you can set it to a small nonzero value, such as 10, for "
-                 "better feature compatibility with online decoding (affects "
-                 "energy normalization in the algorithm)");
-    po->Register("simulate-first-pass-online", &simulate_first_pass_online,
-                 "If true, compute-kaldi-pitch-feats will output features "
-                 "that correspond to what an online decoder would see in the "
-                 "first pass of decoding-- not the final version of the "
-                 "features, which is the default.  Relevant if "
-                 "--frames-per-chunk > 0");
-    po->Register("recompute-frame", &recompute_frame, "Only relevant for "
-                 "online pitch extraction, or for compatibility with online "
-                 "pitch extraction.  A non-critical parameter; the frame at "
-                 "which we recompute some of the forward pointers, after "
-                 "revising our estimate of the signal energy.  Relevant if"
-                 "--frames-per-chunk > 0");
-    po->Register("max-frames-latency", &max_frames_latency, "Maximum number "
-                 "of frames of latency that we allow pitch tracking to "
-                 "introduce into the feature processing (affects output only "
-                 "if --frames-per-chunk > 0 and "
-                 "--simulate-first-pass-online=true");
-    po->Register("snip-edges", &snip_edges, "If this is set to false, the "
-                 "incomplete frames near the ending edge won't be snipped, so "
-                 "that the number of frames is the file size divided by the "
-                 "frame-shift. This makes different types of features give the "
-                 "same number of frames.");
-
+  void Register(OptionsItf *opts) {
+    opts->Register("sample-frequency", &samp_freq,
+                   "Waveform data sample frequency (must match the waveform "
+                   "file, if specified there)");
+    opts->Register("frame-length", &frame_length_ms, "Frame length in "
+                   "milliseconds");
+    opts->Register("frame-shift", &frame_shift_ms, "Frame shift in "
+                   "milliseconds");
+    opts->Register("preemphasis-coefficient", &preemph_coeff,
+                   "Coefficient for use in signal preemphasis (deprecated)");
+    opts->Register("min-f0", &min_f0,
+                   "min. F0 to search for (Hz)");
+    opts->Register("max-f0", &max_f0,
+                   "max. F0 to search for (Hz)");
+    opts->Register("soft-min-f0", &soft_min_f0,
+                   "Minimum f0, applied in soft way, must not exceed min-f0");
+    opts->Register("penalty-factor", &penalty_factor,
+                   "cost factor for FO change.");
+    opts->Register("lowpass-cutoff", &lowpass_cutoff,
+                   "cutoff frequency for LowPass filter (Hz) ");
+    opts->Register("resample-frequency", &resample_freq,
+                   "Frequency that we down-sample the signal to.  Must be "
+                   "more than twice lowpass-cutoff");
+    opts->Register("delta-pitch", &delta_pitch,
+                   "Smallest relative change in pitch that our algorithm "
+                   "measures");
+    opts->Register("nccf-ballast", &nccf_ballast,
+                   "Increasing this factor reduces NCCF for quiet frames");
+    opts->Register("nccf-ballast-online", &nccf_ballast_online,
+                   "This is useful mainly for debug; it affects how the NCCF "
+                   "ballast is computed.");
+    opts->Register("lowpass-filter-width", &lowpass_filter_width,
+                   "Integer that determines filter width of "
+                   "lowpass filter, more gives sharper filter");
+    opts->Register("upsample-filter-width", &upsample_filter_width,
+                   "Integer that determines filter width when upsampling NCCF");
+    opts->Register("frames-per-chunk", &frames_per_chunk, "Only relevant for "
+                   "offline pitch extraction (e.g. compute-kaldi-pitch-feats), "
+                   "you can set it to a small nonzero value, such as 10, for "
+                   "better feature compatibility with online decoding (affects "
+                   "energy normalization in the algorithm)");
+    opts->Register("simulate-first-pass-online", &simulate_first_pass_online,
+                   "If true, compute-kaldi-pitch-feats will output features "
+                   "that correspond to what an online decoder would see in the "
+                   "first pass of decoding-- not the final version of the "
+                   "features, which is the default.  Relevant if "
+                   "--frames-per-chunk > 0");
+    opts->Register("recompute-frame", &recompute_frame, "Only relevant for "
+                   "online pitch extraction, or for compatibility with online "
+                   "pitch extraction.  A non-critical parameter; the frame at "
+                   "which we recompute some of the forward pointers, after "
+                   "revising our estimate of the signal energy.  Relevant if"
+                   "--frames-per-chunk > 0");
+    opts->Register("max-frames-latency", &max_frames_latency, "Maximum number "
+                   "of frames of latency that we allow pitch tracking to "
+                   "introduce into the feature processing (affects output only "
+                   "if --frames-per-chunk > 0 and "
+                   "--simulate-first-pass-online=true");
+    opts->Register("snip-edges", &snip_edges, "If this is set to false, the "
+                   "incomplete frames near the ending edge won't be snipped, "
+                   "so that the number of frames is the file size divided by "
+                   "the frame-shift. This makes different types of features "
+                   "give the same number of frames.");
   }
   /// Returns the window-size in samples, after resampling.  This is the
   /// "basic window size", not the full window size after extending by max-lag.
+  // Because of floating point representation, it is more reliable to divide
+  // by 1000 instead of multiplying by 0.001, but it is a bit slower.
   int32 NccfWindowSize() const {
-    return static_cast<int32>(resample_freq * 0.001 * frame_length_ms);
+    return static_cast<int32>(resample_freq * frame_length_ms / 1000.0);
   }
   /// Returns the window-shift in samples, after resampling.
   int32 NccfWindowShift() const {
-    return static_cast<int32>(resample_freq * 0.001 * frame_shift_ms);
+    return static_cast<int32>(resample_freq * frame_shift_ms / 1000.0);
   }
 };
 
@@ -222,12 +226,12 @@ struct ProcessPitchOptions {
 
   int32 delta_window;
   int32 delay;
-  
-  bool add_pov_feature;  
-  bool add_normalized_log_pitch;  
+
+  bool add_pov_feature;
+  bool add_normalized_log_pitch;
   bool add_delta_pitch;
   bool add_raw_log_pitch;
-  
+
   ProcessPitchOptions() :
       pitch_scale(2.0),
       pov_scale(2.0),
@@ -244,43 +248,44 @@ struct ProcessPitchOptions {
       add_raw_log_pitch(false) { }
 
 
-  void Register(ParseOptions *po) {
-    po->Register("pitch-scale", &pitch_scale,
-                 "Scaling factor for the final normalized log-pitch value");
-    po->Register("pov-scale", &pov_scale,
-                 "Scaling factor for final POV (probability of voicing) "
-                 "feature");
-    po->Register("pov-offset", &pov_offset,
-                 "This can be used to add an offset to the POV feature. "
-                 "Intended for use in online decoding as a substitute for "
-                 " CMN.");
-    po->Register("delta-pitch-scale", &delta_pitch_scale,
-                 "Term to scale the final delta log-pitch feature");
-    po->Register("delta-pitch-noise-stddev", &delta_pitch_noise_stddev,
-                 "Standard deviation for noise we add to the delta log-pitch "
-                 "(before scaling); should be about the same as delta-pitch "
-                 "option to pitch creation.  The purpose is to get rid of "
-                 "peaks in the delta-pitch caused by discretization of pitch "
-                 "values.");
-    po->Register("normalization-left-context", &normalization_left_context,
-                 "Left-context (in frames) for moving window normalization");
-    po->Register("normalization-right-context", &normalization_right_context,
-                 "Right-context (in frames) for moving window normalization");
-    po->Register("delta-window", &delta_window,
-                 "Number of frames on each side of central frame, to use for "
-                 "delta window.");
-    po->Register("delay", &delay,
-                 "Number of frames by which the pitch information is delayed.");
-    po->Register("add-pov-feature", &add_pov_feature,
-                 "If true, the warped NCCF is added to output features");
-    po->Register("add-normalized-log-pitch", &add_normalized_log_pitch,
-                 "If true, the log-pitch with POV-weighted mean subtraction "
-                 "over 1.5 second window is added to output features");
-    po->Register("add-delta-pitch", &add_delta_pitch,
-                 "If true, time derivative of log-pitch is added to output "
-                 "features");
-    po->Register("add-raw-log-pitch", &add_raw_log_pitch,
-                 "If true, log(pitch) is added to output features");
+  void Register(ParseOptions *opts) {
+    opts->Register("pitch-scale", &pitch_scale,
+                   "Scaling factor for the final normalized log-pitch value");
+    opts->Register("pov-scale", &pov_scale,
+                   "Scaling factor for final POV (probability of voicing) "
+                   "feature");
+    opts->Register("pov-offset", &pov_offset,
+                   "This can be used to add an offset to the POV feature. "
+                   "Intended for use in online decoding as a substitute for "
+                   " CMN.");
+    opts->Register("delta-pitch-scale", &delta_pitch_scale,
+                   "Term to scale the final delta log-pitch feature");
+    opts->Register("delta-pitch-noise-stddev", &delta_pitch_noise_stddev,
+                   "Standard deviation for noise we add to the delta log-pitch "
+                   "(before scaling); should be about the same as delta-pitch "
+                   "option to pitch creation.  The purpose is to get rid of "
+                   "peaks in the delta-pitch caused by discretization of pitch "
+                   "values.");
+    opts->Register("normalization-left-context", &normalization_left_context,
+                   "Left-context (in frames) for moving window normalization");
+    opts->Register("normalization-right-context", &normalization_right_context,
+                   "Right-context (in frames) for moving window normalization");
+    opts->Register("delta-window", &delta_window,
+                   "Number of frames on each side of central frame, to use for "
+                   "delta window.");
+    opts->Register("delay", &delay,
+                   "Number of frames by which the pitch information is "
+                   "delayed.");
+    opts->Register("add-pov-feature", &add_pov_feature,
+                   "If true, the warped NCCF is added to output features");
+    opts->Register("add-normalized-log-pitch", &add_normalized_log_pitch,
+                   "If true, the log-pitch with POV-weighted mean subtraction "
+                   "over 1.5 second window is added to output features");
+    opts->Register("add-delta-pitch", &add_delta_pitch,
+                   "If true, time derivative of log-pitch is added to output "
+                   "features");
+    opts->Register("add-raw-log-pitch", &add_raw_log_pitch,
+                   "If true, log(pitch) is added to output features");
   }
 };
 
@@ -299,6 +304,8 @@ class OnlinePitchFeature: public OnlineBaseFeature {
   virtual int32 Dim() const { return 2; /* (NCCF, pitch) */ }
 
   virtual int32 NumFramesReady() const;
+
+  virtual BaseFloat FrameShiftInSeconds() const;
 
   virtual bool IsLastFrame(int32 frame) const;
 
@@ -329,10 +336,13 @@ class OnlineProcessPitch: public OnlineFeatureInterface {
   virtual bool IsLastFrame(int32 frame) const {
     if (frame <= -1)
       return src_->IsLastFrame(-1);
-    else if (frame < opts_.delay) 
+    else if (frame < opts_.delay)
       return src_->IsLastFrame(-1) == true ? false : src_->IsLastFrame(0);
     else
-      return src_->IsLastFrame(frame - opts_.delay); 
+      return src_->IsLastFrame(frame - opts_.delay);
+  }
+  virtual BaseFloat FrameShiftInSeconds() const {
+    return src_->FrameShiftInSeconds();
   }
 
   virtual int32 NumFramesReady() const;
@@ -346,7 +356,9 @@ class OnlineProcessPitch: public OnlineFeatureInterface {
                      OnlineFeatureInterface *src);
 
  private:
-  enum { kRawFeatureDim = 2 };  // use this to avoid redefining kRawFeatureDim
+  enum { kRawFeatureDim = 2};  // anonymous enum to define a constant.
+                               // kRawFeatureDim defines the dimension
+                               // of the input: (nccf, pitch)
 
   ProcessPitchOptions opts_;
   OnlineFeatureInterface *src_;
@@ -369,15 +381,15 @@ class OnlineProcessPitch: public OnlineFeatureInterface {
   std::vector<NormalizationStats> normalization_stats_;
 
   /// Computes and returns the POV feature for this frame.
-  /// Called from GetFrame().  
-  inline BaseFloat GetPovFeature(int32 frame) const;  
+  /// Called from GetFrame().
+  inline BaseFloat GetPovFeature(int32 frame) const;
 
   /// Computes and returns the delta-log-pitch feature for this frame.
   /// Called from GetFrame().
   inline BaseFloat GetDeltaPitchFeature(int32 frame);
 
   /// Computes and returns the raw log-pitch feature for this frame.
-  /// Called from GetFrame().  
+  /// Called from GetFrame().
   inline BaseFloat GetRawLogPitchFeature(int32 frame) const;
 
   /// Computes and returns the mean-subtracted log-pitch feature for this frame.

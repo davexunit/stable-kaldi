@@ -179,7 +179,6 @@ bool GetLinearSymbolSequence(const Fst<Arc> &fst,
                              vector<I> *isymbols_out,
                              vector<I> *osymbols_out,
                              typename Arc::Weight *tot_weight_out) {
-  typedef typename Arc::Label Label;
   typedef typename Arc::StateId StateId;
   typedef typename Arc::Weight Weight;
 
@@ -222,7 +221,6 @@ bool GetLinearSymbolSequences(const Fst<Arc> &fst,
                               vector<vector<I> > *isymbols_out,
                               vector<vector<I> > *osymbols_out,
                               vector<typename Arc::Weight> *weights_out) {
-  typedef typename Arc::Label Label;
   typedef typename Arc::StateId StateId;
   typedef typename Arc::Weight Weight;
 
@@ -244,7 +242,7 @@ bool GetLinearSymbolSequences(const Fst<Arc> &fst,
   if (weights_out) weights_out->resize(N);
 
   bool error = false;
-  
+
   for (ArcIterator<Fst<Arc> > aiter(fst, start_state);
        !aiter.Done();
        aiter.Next(), n++) {
@@ -306,7 +304,7 @@ void ConvertNbestToVector(const Fst<Arc> &fst,
     StateId start_state_out = fsts_out->back().AddState();
     fsts_out->back().SetFinal(start_state_out, fst.Final(start_state));
   }
-  
+
   for (ArcIterator<Fst<Arc> > start_aiter(fst, start_state);
        !start_aiter.Done();
        start_aiter.Next()) {
@@ -356,12 +354,11 @@ void NbestAsFsts(const Fst<Arc> &fst,
   VectorFst<Arc> nbest_fst;
   ShortestPath(fst, &nbest_fst, n);
   ConvertNbestToVector(nbest_fst, fsts_out);
-}    
+}
 
 template<class Arc, class I>
 void MakeLinearAcceptorWithAlternatives(const vector<vector<I> > &labels,
                                         MutableFst<Arc> *ofst) {
-  typedef typename Arc::Label Label;
   typedef typename Arc::StateId StateId;
   typedef typename Arc::Weight Weight;
 
@@ -382,7 +379,6 @@ void MakeLinearAcceptorWithAlternatives(const vector<vector<I> > &labels,
 
 template<class Arc, class I>
 void MakeLinearAcceptor(const vector<I> &labels, MutableFst<Arc> *ofst) {
-  typedef typename Arc::Label Label;
   typedef typename Arc::StateId StateId;
   typedef typename Arc::Weight Weight;
 
@@ -506,7 +502,6 @@ void SafeDeterminizeWrapperInLog(VectorFst<StdArc> *ifst, VectorFst<StdArc> *ofs
 
 template<class Arc>
 void RemoveWeights(MutableFst<Arc> *ifst) {
-  typedef typename Arc::Label Label;
   typedef typename Arc::StateId StateId;
   typedef typename Arc::Weight Weight;
 
@@ -539,7 +534,6 @@ bool PrecedingInputSymbolsAreSame(bool start_is_epsilon, const Fst<Arc> &fst) {
 
 template<class Arc, class F> // F is functor type from labels to classes.
 bool PrecedingInputSymbolsAreSameClass(bool start_is_epsilon, const Fst<Arc> &fst, const F &f) {
-  typedef typename Arc::Label Label;
   typedef typename F::Result ClassType;
   typedef typename Arc::StateId StateId;
   vector<ClassType> classes;
@@ -578,7 +572,6 @@ bool FollowingInputSymbolsAreSame(bool end_is_epsilon, const Fst<Arc> &fst) {
 
 template<class Arc, class F>
 bool FollowingInputSymbolsAreSameClass(bool end_is_epsilon, const Fst<Arc> &fst, const F &f) {
-  typedef typename Arc::Label Label;
   typedef typename Arc::StateId StateId;
   typedef typename Arc::Weight Weight;
   typedef typename F::Result ClassType;
@@ -610,7 +603,6 @@ void MakePrecedingInputSymbolsSame(bool start_is_epsilon, MutableFst<Arc> *fst) 
 template<class Arc, class F>
 void MakePrecedingInputSymbolsSameClass(bool start_is_epsilon, MutableFst<Arc> *fst, const F &f) {
   typedef typename F::Result ClassType;
-  typedef typename Arc::Label Label;
   typedef typename Arc::StateId StateId;
   typedef typename Arc::Weight Weight;
   vector<ClassType> classes;
@@ -692,7 +684,6 @@ void MakeFollowingInputSymbolsSame(bool end_is_epsilon, MutableFst<Arc> *fst) {
 
 template<class Arc, class F>
 void MakeFollowingInputSymbolsSameClass(bool end_is_epsilon, MutableFst<Arc> *fst, const F &f) {
-  typedef typename Arc::Label Label;
   typedef typename Arc::StateId StateId;
   typedef typename Arc::Weight Weight;
   typedef typename F::Result ClassType;
@@ -758,7 +749,7 @@ VectorFst<Arc>* MakeLoopFst(const vector<const ExpandedFst<Arc> *> &fsts) {
   // "cache" is used as an optimization when some of the pointers in "fsts"
   // may have the same value.
   unordered_map<const ExpandedFst<Arc> *, Arc> cache;
-  
+
   for (Label i = 0; i < static_cast<Label>(fsts.size()); i++) {
     const ExpandedFst<Arc> *fst = fsts[i];
     if (fst == NULL) continue;
@@ -773,20 +764,20 @@ VectorFst<Arc>* MakeLoopFst(const vector<const ExpandedFst<Arc> *> &fsts) {
         continue;
       }
     }
-    
+
     KALDI_ASSERT(fst->Properties(kAcceptor, true) == kAcceptor);  // expect acceptor.
 
     StateId fst_num_states = fst->NumStates();
     StateId fst_start_state = fst->Start();
-    
+
     if (fst_start_state == kNoStateId)
       continue;  // empty fst.
-    
+
     bool share_start_state =
         fst->Properties(kInitialAcyclic, true) == kInitialAcyclic
         && fst->NumArcs(fst_start_state) == 1
         && fst->Final(fst_start_state) == Weight::Zero();
-    
+
     vector<StateId> state_map(fst_num_states);  // fst state -> ans state
     for (StateId s = 0; s < fst_num_states; s++) {
       if (s == fst_start_state && share_start_state) state_map[s] = loop_state;
@@ -882,7 +873,7 @@ template<class Arc>
 bool EqualAlign(const Fst<Arc> &ifst,
                 typename Arc::StateId length,
                 int rand_seed,
-                MutableFst<Arc> *ofst, 
+                MutableFst<Arc> *ofst,
                 int num_retries) {
   srand(rand_seed);
   KALDI_ASSERT(ofst->NumStates() == 0);  // make sure ofst empty.
@@ -890,7 +881,6 @@ bool EqualAlign(const Fst<Arc> &ifst,
   // infinite loop.
   KALDI_ASSERT(ifst.Properties(kCoAccessible, true) == kCoAccessible);
 
-  typedef typename Arc::Label Label;
   typedef typename Arc::StateId StateId;
   typedef typename Arc::Weight Weight;
 
@@ -907,9 +897,9 @@ bool EqualAlign(const Fst<Arc> &ifst,
   int retry_no = 0;
 
   // Under normal circumstances, this will be one-pass-only process
-  // Multiple tries might be needed in special cases, typically when 
-  // the number of frames is close to number of transitions from 
-  // the start node to the final node. It usually happens for really 
+  // Multiple tries might be needed in special cases, typically when
+  // the number of frames is close to number of transitions from
+  // the start node to the final node. It usually happens for really
   // short utterances
   do {
     num_ilabels = 0;
@@ -949,7 +939,7 @@ bool EqualAlign(const Fst<Arc> &ifst,
 
   if (num_ilabels > length) {
     std::stringstream ilabel_vec;
-    std::copy(nof_ilabels.begin(), nof_ilabels.end(), 
+    std::copy(nof_ilabels.begin(), nof_ilabels.end(),
           std::ostream_iterator<int>(ilabel_vec, ","));
     std::string s = ilabel_vec.str();
     s.erase(s.end() - 1);
@@ -1128,94 +1118,6 @@ void PhiCompose(const Fst<Arc> &fst1,
 }
 
 template<class Arc>
-void ComposeDeterministicOnDemand(const Fst<Arc> &fst1,
-                                  DeterministicOnDemandFst<Arc> *fst2,
-                                  MutableFst<Arc> *fst_composed) {
-  typedef typename Arc::Weight Weight;
-  typedef typename Arc::StateId StateId;
-  typedef std::pair<StateId, StateId> StatePair;
-  typedef unordered_map<StatePair, StateId, 
-    kaldi::PairHasher<StateId> > MapType;
-  typedef typename MapType::iterator IterType;
-
-  fst_composed->DeleteStates();
-
-  MapType state_map;
-  std::queue<StatePair> state_queue;
-
-  // Set start state in fst_composed.
-  StateId s1 = fst1.Start(),
-          s2 = fst2->Start(),
-          start_state = fst_composed->AddState();
-  StatePair start_pair(s1, s2);
-  state_queue.push(start_pair);
-  fst_composed->SetStart(start_state);
-  // A mapping between pairs of states in fst1 and fst2 and the corresponding
-  // state in fst_composed.
-  std::pair<const StatePair, StateId> start_map(start_pair, start_state);
-  std::pair<IterType, bool> result = state_map.insert(start_map);
-  KALDI_ASSERT(result.second == true);
-   
-  while (!state_queue.empty()) {
-    StatePair q = state_queue.front();
-    StateId q1 = q.first,
-            q2 = q.second;
-    state_queue.pop();
-    // If the product of the final weights of the two fsts is non-zero then 
-    // we can create a final state in fst_composed.
-    Weight final_weight = Times(fst1.Final(q1), fst2->Final(q2));
-    if (final_weight != Weight::Zero()) {
-      KALDI_ASSERT(state_map.find(q) != state_map.end());
-      fst_composed->SetFinal(state_map[q], final_weight); 
-    }
-
-    // for each pair of edges from fst1 and fst2 at q1 and q2.
-    for (ArcIterator<Fst<Arc> > aiter(fst1, q1); !aiter.Done(); aiter.Next()) {
-      const Arc &arc1 = aiter.Value();
-      Arc arc2;
-      StatePair next_pair;
-      StateId next_state1 = arc1.nextstate,
-              next_state2,
-              next_state;
-      // If there is an epsilon on the arc of fst1 we transition to the next 
-      // state but keep fst2 at the current state. 
-      if (arc1.olabel == 0) {
-        next_state2 = q2;
-      } else {
-        bool match = fst2->GetArc(q2, arc1.olabel, &arc2);
-        // This should always find a match.
-        KALDI_ASSERT(match == true);
-        next_state2 = arc2.nextstate;
-      }
-      next_pair = StatePair(next_state1, next_state2);
-      IterType sitr = state_map.find(next_pair);
-      // If sitr == state_map.end() then the state isn't in fst_composed yet.
-      if (sitr == state_map.end()) {
-        next_state = fst_composed->AddState();
-        std::pair<const StatePair, StateId> new_state(
-          next_pair, next_state);
-        std::pair<IterType, bool> result = state_map.insert(new_state);
-        // Since we already checked if state_map contained new_state,
-        // it should always be added if we reach here.
-        KALDI_ASSERT(result.second == true);
-        state_queue.push(next_pair);
-      // If sitr != state_map.end() then the next state is already in
-      // the state_map.
-      } else {
-        next_state = sitr->second;
-      }
-      if (arc1.olabel == 0) {
-        fst_composed->AddArc(state_map[q], Arc(0, 0, arc1.weight, 
-          next_state));
-      } else {
-        fst_composed->AddArc(state_map[q], Arc(arc1.ilabel, arc2.olabel, 
-          Times(arc1.weight, arc2.weight), next_state));
-      }
-    }
-  }
-}
-
-template<class Arc>
 void PropagateFinalInternal(
     typename Arc::Label phi_label,
     typename Arc::StateId s,
@@ -1233,7 +1135,7 @@ void PropagateFinalInternal(
         num_phis++;
         if (arc.nextstate == s) continue; // don't expect
         // phi loops but ignore them anyway.
-        
+
         // If this recurses infinitely, it means there
         // are loops of phi transitions, which there should
         // not be in a normal backoff LM.  We could make this
@@ -1291,32 +1193,6 @@ void RhoCompose(const Fst<Arc> &fst1,
 }
 
 
-inline VectorFst<StdArc> *ReadFstKaldi(std::string rxfilename) {
-  if (rxfilename == "") rxfilename = "-"; // interpret "" as stdin,
-  // for compatibility with OpenFst conventions.
-  kaldi::Input ki(rxfilename);
-  fst::FstHeader hdr;
-  if (!hdr.Read(ki.Stream(), rxfilename))
-    KALDI_ERR << "Reading FST: error reading FST header from "
-              << kaldi::PrintableRxfilename(rxfilename);
-  FstReadOptions ropts("<unspecified>", &hdr);
-  VectorFst<StdArc> *fst = VectorFst<StdArc>::Read(ki.Stream(), ropts);
-  if (!fst)
-    KALDI_ERR << "Could not read fst from "
-              << kaldi::PrintableRxfilename(rxfilename);
-  return fst;
-}
-
-inline void WriteFstKaldi(const VectorFst<StdArc> &fst,
-                          std::string wxfilename) {
-  if (wxfilename == "") wxfilename = "-"; // interpret "" as stdout,
-  // for compatibility with OpenFst conventions.
-  bool write_binary = true, write_header = false;
-  kaldi::Output ko(wxfilename, write_binary, write_header);
-  FstWriteOptions wopts(kaldi::PrintableWxfilename(wxfilename));
-  fst.Write(ko.Stream(), wopts);
-}
-
 // Declare an override of the template below.
 template<>
 inline bool IsStochasticFst(const Fst<LogArc> &fst,
@@ -1330,7 +1206,6 @@ bool IsStochasticFst(const Fst<Arc> &fst,
                      float delta,
                      typename Arc::Weight *min_sum,
                      typename Arc::Weight *max_sum) {
-  typedef typename Arc::Label Label;
   typedef typename Arc::StateId StateId;
   typedef typename Arc::Weight Weight;
   NaturalLess<Weight> nl;
@@ -1368,7 +1243,6 @@ bool IsStochasticFst(const Fst<LogArc> &fst,
                      LogArc::Weight *min_sum,
                      LogArc::Weight *max_sum) {
   typedef LogArc Arc;
-  typedef Arc::Label Label;
   typedef Arc::StateId StateId;
   typedef Arc::Weight Weight;
   bool first_time = true;

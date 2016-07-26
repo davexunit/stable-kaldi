@@ -27,40 +27,20 @@ xcuserdata/
 *.hmap
 *.ipa
 
-# CocoaPods
-#
-# We recommend against adding the Pods directory to your .gitignore. However
-# you should judge for yourself, the pros and cons are mentioned at:
-# https://guides.cocoapods.org/using/using-cocoapods.html#should-i-check-the-pods-directory-into-source-control
-#
-# Pods/
+# Compiled extensionless executable files in /src/*/
+# This stanza must precede wildcard patterns below!
+/src/*/*
+!/src/*/*.*
+!/src/doc/*
+!/src/*/Makefile
+!/src/*/README
 
-# Carthage
-#
-# Add this line if you want to avoid checking in source code from Carthage dependencies.
-# Carthage/Checkouts
-
-Carthage/Build
-
-# fastlane
-#
-# It is recommended to not store the screenshots in the git repo. Instead, use fastlane to re-generate the
-# screenshots whenever they are needed.
-# For more information about the recommended setup visit:
-# https://github.com/fastlane/fastlane/blob/master/fastlane/docs/Gitignore.md
-
-fastlane/report.xml
-fastlane/screenshots
-
-# Compiled Object files
+# Compiled Object files and python ciles
 *.slo
 *.lo
 *.o
 *.obj
-
-# emacs saves
-[#]*[#]
-*~
+*.pyc
 
 # Compiled Dynamic libraries
 *.so
@@ -73,6 +53,25 @@ fastlane/screenshots
 *.a
 *.lib
 
+# Test log files
+*.testlog
+
+# emacs saves
+[#]*[#]
+.[#]*
+*~
+
+# [ecg]tag files
+TAGS
+tags
+GTAGS
+GRTAGS
+GPATH
+GSYMS
+
+# Make dependencies
+.depend.mk
+
 # some weird thing that MacOs creates.
 *.dSYM
 
@@ -82,6 +81,20 @@ fastlane/screenshots
 *.exp
 *.manifest
 
+# /src/
+/src/doc/table/
+/src/doc/tools.dox
+/src/htdocs/
+/src/html.tar.gz
+/src/kaldi.mk
+/src/kaldi.mk.tmp
+/src/kaldi.mk.bak
+
+# /egs/
+/egs/*/s*/mfcc
+/egs/*/s*/plp
+/egs/*/s*/exp
+/egs/*/s*/data
 
 # /tools/
 /tools/ATLAS/
@@ -98,6 +111,8 @@ fastlane/screenshots
 /tools/portaudio/
 /tools/sctk-2.4.0-20091110-0958.tar.bz2
 /tools/sctk-2.4.0/
+/tools/sctk-2.4.10-20151007-1312Z.tar.bz2
+/tools/sctk-2.4.10/
 /tools/sph2pipe_v2.5.tar.gz
 /tools/sph2pipe_v2.5/
 /tools/kaldi_lm.tar.gz
@@ -1203,3 +1218,14 @@ paket-files/
 # JetBrains Rider
 .idea/
 *.sln.iml
+/tools/env.sh
+/tools/g2p-r1668.tar.gz
+/tools/mpg123
+/tools/mpg123-1.21.0.tar.bz2
+/tools/mpg123-1.21.0
+/tools/pthreads
+/tools/pthreads*.zip
+/tools/sequitur
+/tools/srilm.tgz
+
+/kaldiwin_vs*

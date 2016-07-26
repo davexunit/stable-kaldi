@@ -74,13 +74,12 @@ int main(int argc, char *argv[]) {
       "Note: this program was mainly intended to validate the lattice generation\n"
       "algorithm and is not very useful; in general, processing the\n"
       "lattices into n-best lists will be more efficient.\n"
-      "Usage:\n"
-      " gmm-decode-nbest [options] <model-in> <fst-in> <features-rspecifier> "
+      "Usage: gmm-decode-nbest [options] <model-in> <fst-in> <features-rspecifier> "
         "<nbest-lattice-wspecifier> <words-wspecifier> [<alignments-wspecifier>]\n";
     ParseOptions po(usage);
     bool allow_partial = true;
     BaseFloat acoustic_scale = 0.1;
-    
+
     std::string word_syms_filename;
     NBestDecoderOptions decoder_opts;
     decoder_opts.Register(&po, true);  // true == include obscure settings.
@@ -124,7 +123,7 @@ int main(int argc, char *argv[]) {
     Int32VectorWriter alignment_writer(alignment_wspecifier);
 
     fst::SymbolTable *word_syms = NULL;
-    if (word_syms_filename != "") 
+    if (word_syms_filename != "")
       if (!(word_syms = fst::SymbolTable::ReadText(word_syms_filename)))
         KALDI_ERR << "Could not read symbol table from file "
                    << word_syms_filename;
@@ -235,7 +234,7 @@ int main(int argc, char *argv[]) {
     KALDI_LOG << "Overall log-likelihood per frame is " << (tot_like/frame_count) << " over "
               << frame_count<<" frames.";
 
-    if (word_syms) delete word_syms;    
+    delete word_syms;
     delete decode_fst;
     if (num_success != 0) return 0;
     else return 1;

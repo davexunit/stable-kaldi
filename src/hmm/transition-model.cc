@@ -24,7 +24,7 @@
 
 namespace kaldi {
 
-void TransitionModel::ComputeTriples(const ContextDependency &ctx_dep) {
+void TransitionModel::ComputeTriples(const ContextDependencyInterface &ctx_dep) {
   const std::vector<int32> &phones = topo_.GetPhones();
   std::vector<std::vector<std::pair<int32, int32> > > pdf_info;
   KALDI_ASSERT(!phones.empty());
@@ -110,7 +110,7 @@ void TransitionModel::InitializeProbs() {
           "probability [should remove that entry in the topology]";
     if (prob > 1.0)
       KALDI_WARN << "TransitionModel::InitializeProbs, prob greater than one.";
-    log_probs_(trans_id) = log(prob);
+    log_probs_(trans_id) = Log(prob);
   }
   ComputeDerivedOfProbs();
 }
@@ -136,7 +136,7 @@ void TransitionModel::Check() const {
   }
 }
 
-TransitionModel::TransitionModel(const ContextDependency &ctx_dep,
+TransitionModel::TransitionModel(const ContextDependencyInterface &ctx_dep,
                                  const HmmTopology &hmm_topo): topo_(hmm_topo) {
   // First thing is to get all possible triples.
   ComputeTriples(ctx_dep);
@@ -220,7 +220,7 @@ bool TransitionModel::IsFinal(int32 trans_id) const {
                entry[triple.hmm_state].transitions.size());
   // return true if the transition goes to the final state of the
   // topology entry.
-  return (entry[triple.hmm_state].transitions[trans_index].first + 1 == 
+  return (entry[triple.hmm_state].transitions[trans_index].first + 1 ==
           static_cast<int32>(entry.size()));
 }
 
@@ -260,13 +260,13 @@ void TransitionModel::ComputeDerivedOfProbs() {
     if (tid == 0) {  // no self-loop
       non_self_loop_log_probs_(tstate) = 0.0;  // log(1.0)
     } else {
-      BaseFloat self_loop_prob = exp(GetTransitionLogProb(tid)),
+      BaseFloat self_loop_prob = Exp(GetTransitionLogProb(tid)),
           non_self_loop_prob = 1.0 - self_loop_prob;
       if (non_self_loop_prob <= 0.0) {
         KALDI_WARN << "ComputeDerivedOfProbs(): non-self-loop prob is " << non_self_loop_prob;
         non_self_loop_prob = 1.0e-10;  // just so we can continue...
       }
-      non_self_loop_log_probs_(tstate) = log(non_self_loop_prob);  // will be negative.
+      non_self_loop_log_probs_(tstate) = Log(non_self_loop_prob);  // will be negative.
     }
   }
 }
@@ -318,7 +318,7 @@ void TransitionModel::Write(std::ostream &os, bool binary) const {
 }
 
 BaseFloat TransitionModel::GetTransitionProb(int32 trans_id) const {
-  return exp(log_probs_(trans_id));
+  return Exp(log_probs_(trans_id));
 }
 
 BaseFloat TransitionModel::GetTransitionLogProb(int32 trans_id) const {
@@ -337,7 +337,7 @@ BaseFloat TransitionModel::GetTransitionLogProbIgnoringSelfLoops(int32 trans_id)
 }
 
 // stats are counts/weights, indexed by transition-id.
-void TransitionModel::MleUpdate(const Vector<double> &stats,  
+void TransitionModel::MleUpdate(const Vector<double> &stats,
                                 const MleTransitionUpdateConfig &cfg,
                                 BaseFloat *objf_impr_out,
                                 BaseFloat *count_out) {
@@ -376,14 +376,14 @@ void TransitionModel::MleUpdate(const Vector<double> &stats,
         // Compute objf change
         for (int32 tidx = 0; tidx < n; tidx++) {
           if (new_probs(tidx) == cfg.floor) num_floored++;
-          double objf_change = counts(tidx) * (log(new_probs(tidx))
-                                               - log(old_probs(tidx)));
+          double objf_change = counts(tidx) * (Log(new_probs(tidx))
+                                               - Log(old_probs(tidx)));
           objf_impr_sum += objf_change;
         }
         // Commit updated values.
         for (int32 tidx = 0; tidx < n; tidx++) {
           int32 tid = PairToTransitionId(tstate, tidx);
-          log_probs_(tid) = log(new_probs(tidx));
+          log_probs_(tid) = Log(new_probs(tidx));
           if (log_probs_(tid) - log_probs_(tid) != 0.0)
             KALDI_ERR << "Log probs is inf or NaN: error in update or bad stats?";
         }
@@ -403,7 +403,7 @@ void TransitionModel::MleUpdate(const Vector<double> &stats,
 
 
 // stats are counts/weights, indexed by transition-id.
-void TransitionModel::MapUpdate(const Vector<double> &stats,  
+void TransitionModel::MapUpdate(const Vector<double> &stats,
                                 const MapTransitionUpdateConfig &cfg,
                                 BaseFloat *objf_impr_out,
                                 BaseFloat *count_out) {
@@ -435,14 +435,14 @@ void TransitionModel::MapUpdate(const Vector<double> &stats,
             (cfg.tau + tstate_tot);
       // Compute objf change
       for (int32 tidx = 0; tidx < n; tidx++) {
-        double objf_change = counts(tidx) * (log(new_probs(tidx))
-                                             - log(old_probs(tidx)));
+        double objf_change = counts(tidx) * (Log(new_probs(tidx))
+                                             - Log(old_probs(tidx)));
         objf_impr_sum += objf_change;
       }
       // Commit updated values.
       for (int32 tidx = 0; tidx < n; tidx++) {
         int32 tid = PairToTransitionId(tstate, tidx);
-        log_probs_(tid) = log(new_probs(tidx));
+        log_probs_(tid) = Log(new_probs(tidx));
         if (log_probs_(tid) - log_probs_(tid) != 0.0)
           KALDI_ERR << "Log probs is inf or NaN: error in update or bad stats?";
       }
@@ -524,8 +524,8 @@ void TransitionModel::MleUpdateShared(const Vector<double> &stats,
         // Compute objf change
         for (int32 tidx = 0; tidx < n; tidx++) {
           if (new_probs(tidx) == cfg.floor) num_floored++;
-          double objf_change = counts(tidx) * (log(new_probs(tidx))
-                                               - log(old_probs(tidx)));
+          double objf_change = counts(tidx) * (Log(new_probs(tidx))
+                                               - Log(old_probs(tidx)));
           objf_impr_sum += objf_change;
         }
         // Commit updated values.
@@ -535,7 +535,7 @@ void TransitionModel::MleUpdateShared(const Vector<double> &stats,
           int32 tstate = *iter;
           for (int32 tidx = 0; tidx < n; tidx++) {
             int32 tid = PairToTransitionId(tstate, tidx);
-            log_probs_(tid) = log(new_probs(tidx));
+            log_probs_(tid) = Log(new_probs(tidx));
             if (log_probs_(tid) - log_probs_(tid) != 0.0)
               KALDI_ERR << "Log probs is inf or NaN: error in update or bad stats?";
           }
@@ -612,8 +612,8 @@ void TransitionModel::MapUpdateShared(const Vector<double> &stats,
             (pdf_tot + cfg.tau);
       // Compute objf change
       for (int32 tidx = 0; tidx < n; tidx++) {
-        double objf_change = counts(tidx) * (log(new_probs(tidx))
-                                             - log(old_probs(tidx)));
+        double objf_change = counts(tidx) * (Log(new_probs(tidx))
+                                             - Log(old_probs(tidx)));
         objf_impr_sum += objf_change;
       }
       // Commit updated values.
@@ -623,7 +623,7 @@ void TransitionModel::MapUpdateShared(const Vector<double> &stats,
         int32 tstate = *iter;
         for (int32 tidx = 0; tidx < n; tidx++) {
           int32 tid = PairToTransitionId(tstate, tidx);
-          log_probs_(tid) = log(new_probs(tidx));
+          log_probs_(tid) = Log(new_probs(tidx));
           if (log_probs_(tid) - log_probs_(tid) != 0.0)
             KALDI_ERR << "Log probs is inf or NaN: error in update or bad stats?";
         }
@@ -717,7 +717,7 @@ bool GetPdfsForPhones(const TransitionModel &trans_model,
 }
 
 bool GetPhonesForPdfs(const TransitionModel &trans_model,
-                     const std::vector<int32> &pdfs, 
+                     const std::vector<int32> &pdfs,
                      std::vector<int32> *phones) {
   KALDI_ASSERT(IsSortedAndUniq(pdfs));
   KALDI_ASSERT(phones != NULL);
@@ -731,7 +731,7 @@ bool GetPhonesForPdfs(const TransitionModel &trans_model,
 
   for (int32 tstate = 1; tstate <= trans_model.NumTransitionStates(); tstate++)
     if (std::binary_search(phones->begin(), phones->end(),
-                           trans_model.TransitionStateToPhone(tstate)) 
+                           trans_model.TransitionStateToPhone(tstate))
         && !std::binary_search(pdfs.begin(), pdfs.end(),
                                trans_model.TransitionStateToPdf(tstate)))
       return false;

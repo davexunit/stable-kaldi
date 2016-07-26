@@ -3,6 +3,8 @@
 // Copyright 2013     Daniel Povey
 //           2015     David Snyder
 
+// See ../../COPYING for clarification regarding multiple authors
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -110,7 +112,7 @@ float Plda::TransformIvector(const PldaConfig &config,
 double Plda::LogLikelihoodRatio(
     const VectorBase<double> &transformed_train_ivector,
     int32 n, // number of training utterances.
-    const VectorBase<double> &transformed_test_ivector) {
+    const VectorBase<double> &transformed_test_ivector) const {
   int32 dim = Dim();
   double loglike_given_class, loglike_without_class;
   { // work out loglike_given_class.

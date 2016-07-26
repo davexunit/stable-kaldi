@@ -14,6 +14,19 @@
 
 . ./path.sh || exit 1;
 
+if [ -z $IRSTLM ] ; then
+  export IRSTLM=$KALDI_ROOT/tools/irstlm/
+fi
+export PATH=${PATH}:$IRSTLM/bin
+if ! command -v ngt >/dev/null 2>&1 ; then
+  echo "$0: Error: the IRSTLM is not available or compiled" >&2
+  echo "$0: Error: We used to install it by default, but." >&2
+  echo "$0: Error: this is no longer the case." >&2
+  echo "$0: Error: To install it, go to $KALDI_ROOT/tools" >&2
+  echo "$0: Error: and run extras/install_irstlm.sh" >&2
+  exit 1
+fi
+
 echo "Preparing train and test data"
 srcdir=$4
 lmdir=$5
@@ -25,13 +38,12 @@ lm_suffix=$3
 mkdir -p $lmdir
 mkdir -p $tmpdir
 
-irstbin=$KALDI_ROOT/tools/irstlm/bin
 
 #grep -P -v '^[\s?|\.|\!]*$' $lexicon | grep -v '^ *$' | \
 #awk '{if(NF>=4){ printf("%s\n",$0); }}' > $lmdir/text.filt
 
 # Envelop LM training data in context cues
-$irstbin/add-start-end.sh < $lexicon | awk '{if(NF>=3){ printf("%s\n",$0); }}' > $lmdir/lm_input
+add-start-end.sh < $lexicon | awk '{if(NF>=3){ printf("%s\n",$0); }}' > $lmdir/lm_input
 wait
 
 # Next, for each type of language model, create the corresponding FST
@@ -40,10 +52,10 @@ wait
 echo "Preparing language models for test"
 
 # Create Ngram table
-$irstbin/ngt -i=$lmdir/lm_input -n=$ngram -o=$lmdir/train${ngram}.ngt -b=yes
+ngt -i=$lmdir/lm_input -n=$ngram -o=$lmdir/train${ngram}.ngt -b=yes
 wait
 # Estimate trigram and quadrigram models in ARPA format
-$irstbin/tlm -tr=$lmdir/train${ngram}.ngt -n=$ngram -lm=wb -o=$lmdir/train${ngram}.arpa
+tlm -tr=$lmdir/train${ngram}.ngt -n=$ngram -lm=wb -o=$lmdir/train${ngram}.arpa
 wait
 
 
@@ -54,22 +66,8 @@ mkdir -p $test
 cp -r $srcdir/* $test
 
 cat $lmdir/train${ngram}.arpa | \
-  utils/find_arpa_oovs.pl $test/words.txt  > $lmdir/oovs_${lm_suffix}.txt
-
-  # grep -v '<s> <s>' because the LM seems to have some strange and useless
-  # stuff in it with multiple <s>'s in the history.  Encountered some other similar
-  # things in a LM from Geoff.  Removing all "illegal" combinations of <s> and </s>,
-  # which are supposed to occur only at being/end of utt.  These can cause 
-  # determinization failures of CLG [ends up being epsilon cycles].
-cat $lmdir/train${ngram}.arpa | \
-  grep -v '<s> <s>' | \
-  grep -v '</s> <s>' | \
-  grep -v '</s> </s>' | \
-  arpa2fst - | fstprint | \
-  utils/remove_oovs.pl $lmdir/oovs_${lm_suffix}.txt | \
-  utils/eps2disambig.pl | utils/s2eps.pl | fstcompile --isymbols=$test/words.txt \
-    --osymbols=$test/words.txt  --keep_isymbols=false --keep_osymbols=false | \
-   fstrmepsilon | fstarcsort --sort_type=ilabel > $test/G.fst
+  arpa2fst --disambig-symbol=#0 \
+           --read-symbol-table=$test/words.txt - $test/G.fst
 
 utils/validate_lang.pl $test || exit 1;
 

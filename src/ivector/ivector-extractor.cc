@@ -1,7 +1,10 @@
 // ivector/ivector-extractor.cc
 
 // Copyright 2013     Daniel Povey
+//           2015     David Snyder
 
+// See ../../COPYING for clarification regarding multiple authors
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -328,6 +331,21 @@ double IvectorExtractor::GetAuxf(const IvectorExtractorUtteranceStats &utt_stats
   return acoustic_auxf + prior_auxf;
 }
 
+// gets logdet of a matrix while suppressing exceptions; always returns finite
+// value even if there was a problem.
+static double GetLogDetNoFailure(const SpMatrix<double> &var) {
+  try {
+    return var.LogPosDefDet();
+  } catch (...) {
+    Vector<double> eigs(var.NumRows());
+    var.Eig(&eigs);
+    int32 floored = eigs.ApplyFloor(1.0e-20);
+    if (floored > 0)
+      KALDI_WARN << "Floored " << floored << " eigenvalues of variance.";
+    eigs.ApplyLog();
+    return eigs.Sum();
+  }
+}
 
 /*
   Get the prior-related part of the auxiliary function.  Suppose
@@ -375,10 +393,9 @@ double IvectorExtractor::GetPriorAuxf(
     // = -0.5 ( trace(var I) - trace(var^{-1} var) + 0.0 - logdet(var))
     // = -0.5 ( trace(var) - dim(var) - logdet(var))
 
-
     KALDI_ASSERT(var->NumRows() == IvectorDim());
     return -0.5 * (VecVec(offset, offset) + var->Trace() -
-                   IvectorDim() - var->LogPosDefDet());
+                   IvectorDim() - GetLogDetNoFailure(*var));
   }
 }
 
@@ -506,7 +523,6 @@ void IvectorExtractor::TransformIvectors(const MatrixBase<double> &T,
   KALDI_LOG << "Setting iVector prior offset to " << new_prior_offset;
   prior_offset_ = new_prior_offset;
 }
-
 
 void OnlineIvectorEstimationStats::AccStats(
     const IvectorExtractor &extractor,
@@ -1167,6 +1183,28 @@ double IvectorExtractorStats::Update(
   return ans;
 }
 
+void IvectorExtractorStats::IvectorVarianceDiagnostic(
+  const IvectorExtractor &extractor) {
+
+  // W is an estimate of the total residual variance explained by the
+  // speaker-adapated model.  B is an estimate of the total variance
+  // explained by the Ivector-subspace.
+  SpMatrix<double> W(extractor.Sigma_inv_[0].NumRows()),
+                      B(extractor.M_[0].NumRows());
+  Vector<double> w(gamma_);
+  w.Scale(1.0 / gamma_.Sum());
+  for (int32 i = 0; i < extractor.NumGauss(); i++) {
+    SpMatrix<double> Sigma_i(extractor.FeatDim());
+    extractor.InvertWithFlooring(extractor.Sigma_inv_[i], &Sigma_i);
+    W.AddSp(w(i), Sigma_i);
+    B.AddMat2(w(i), extractor.M_[i], kNoTrans, 1.0);
+  }
+  double trace_W = W.Trace(),
+         trace_B = B.Trace();
+  KALDI_LOG << "The proportion of within-Gaussian variance explained by "
+            << "the iVectors is " << trace_B / (trace_B + trace_W) << ".";
+}
+
 double IvectorExtractorStats::UpdateProjection(
     const IvectorExtractorEstimationOptions &opts,
     int32 i,
@@ -1335,6 +1373,17 @@ double IvectorExtractorStats::UpdateVariances(
                opts.variance_floor_factor <= 1.0);
 
   var_floor.Scale(opts.variance_floor_factor / var_floor_count);
+
+  // var_floor should not be singular in any normal case, but previously
+  // we've had situations where cholesky on it failed (perhaps due to
+  // people using linearly dependent features).  So we floor its
+  // singular values.
+  int eig_floored = var_floor.ApplyFloor(var_floor.MaxAbsEig() * 1.0e-04);
+  if (eig_floored > 0) {
+    KALDI_WARN << "Floored " << eig_floored << " eigenvalues of the "
+               << "variance floor matrix.  This is not expected.  Maybe your "
+               << "feature data is linearly dependent.";
+  }
 
   int32 tot_num_floored = 0;
   for (int32 i = 0; i < num_gauss; i++) {

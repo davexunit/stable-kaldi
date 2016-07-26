@@ -19,6 +19,7 @@
 // See the Apache 2 License for the specific language governing permissions and
 // limitations under the License.
 
+#include "base/kaldi-math.h"
 #include "gmm/model-test-common.h"
 #include "sgmm2/am-sgmm2.h"
 #include "sgmm2/estimate-am-sgmm2.h"
@@ -28,6 +29,8 @@ using kaldi::AmSgmm2;
 using kaldi::MleAmSgmm2Accs;
 using kaldi::int32;
 using kaldi::BaseFloat;
+using kaldi::Exp;
+
 namespace ut = kaldi::unittest;
 
 // Tests the Read() and Write() methods for the accumulators, in both binary
@@ -55,7 +58,6 @@ void TestSgmm2AccsIO(const AmSgmm2 &sgmm,
   accs.CommitStatsForSpk(sgmm, empty);
 
   kaldi::MleAmSgmm2Options update_opts;
-  update_opts.check_v = (Rand()%2 == 0);
   AmSgmm2 *sgmm1 = new AmSgmm2();
   sgmm1->CopyFromSgmm2(sgmm, false, false);
   kaldi::MleAmSgmm2Updater updater(update_opts);
@@ -63,7 +65,7 @@ void TestSgmm2AccsIO(const AmSgmm2 &sgmm,
   sgmm1->ComputeDerivedVars();
   std::vector<int32> gselect;
   Sgmm2LikelihoodCache like_cache(sgmm.NumGroups(), sgmm.NumPdfs());
-  
+
   sgmm1->GaussianSelection(sgmm_config, feats.Row(0), &gselect);
   sgmm1->ComputePerFrameVars(feats.Row(0), gselect, empty, &frame_vars);
   BaseFloat loglike1 = sgmm1->LogLikelihood(frame_vars, 0, &like_cache, &empty);
@@ -116,7 +118,7 @@ void TestSgmm2AccsIO(const AmSgmm2 &sgmm,
   delete accs2;
   delete sgmm2;
   delete sgmm3;
-  
+
   unlink("tmpf");
   unlink("tmpfb");
 }
@@ -133,7 +135,7 @@ void UnitTestEstimateSgmm2() {
   pdf2group.push_back(0);
   sgmm.InitializeFromFullGmm(full_gmm, pdf2group, dim+1, dim, false, 0.9); // TODO-- make this true!
   sgmm.ComputeNormalizers();
-  
+
   kaldi::Matrix<BaseFloat> feats;
 
   {  // First, generate random means and variances
@@ -143,7 +145,7 @@ void UnitTestEstimateSgmm2() {
     for (int32 m = 0; m < num_feat_comp; m++) {
       for (int32 d= 0; d < dim; d++) {
         means(m, d) = kaldi::RandGauss();
-        vars(m, d) = exp(kaldi::RandGauss()) + 1e-2;
+        vars(m, d) = Exp(kaldi::RandGauss()) + 1e-2;
       }
     }
     // Now generate random features with those means and variances.

@@ -38,19 +38,19 @@ struct PhoneAlignLatticeOptions {
   PhoneAlignLatticeOptions(): reorder(true),
                               remove_epsilon(true),
                               replace_output_symbols(false) { }
-  void Register(OptionsItf *po) {
-    po->Register("reorder", &reorder, "True if lattice was created from HCLG with "
-                 "--reorder=true option.");
-    po->Register("remove-epsilon", &remove_epsilon, "If true, removes epsilons from "
-                 "the phone lattice; if replace-output-symbols==false, this will "
-                 "mean that an arc can have multiple phones on it.");
-    po->Register("replace-output-symbols", &replace_output_symbols, "If true, "
-                 "the output symbols (typically words) will be replaced with "
-                 "phones.");
+  void Register(OptionsItf *opts) {
+    opts->Register("reorder", &reorder, "True if lattice was created from HCLG with "
+                   "--reorder=true option.");
+    opts->Register("remove-epsilon", &remove_epsilon, "If true, removes epsilons from "
+                   "the phone lattice; if replace-output-symbols==false, this will "
+                   "mean that an arc can have multiple phones on it.");
+    opts->Register("replace-output-symbols", &replace_output_symbols, "If true, "
+                   "the output symbols (typically words) will be replaced with "
+                   "phones.");
   }
 };
 
-/// Returns a lattice in which the arcs correspond exactly to sequences of
+/// Outputs a lattice in which the arcs correspond exactly to sequences of
 /// phones, so the boundaries between the arcs correspond to the boundaries
 /// between phones If remove-epsilon == false and replace-output-symbols ==
 /// false, but an arc may have >1 phone on it, but the boundaries will still

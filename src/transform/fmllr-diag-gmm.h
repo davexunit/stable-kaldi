@@ -45,13 +45,13 @@ struct FmllrOptions {
   BaseFloat min_count;
   int32 num_iters;
   FmllrOptions(): update_type("full"), min_count(500.0), num_iters(40) { }
-  void Register(OptionsItf *po) {
-    po->Register("fmllr-update-type", &update_type,
-                 "Update type for fMLLR (\"full\"|\"diag\"|\"offset\"|\"none\")");
-    po->Register("fmllr-min-count", &min_count,
-                 "Minimum count required to update fMLLR");
-    po->Register("fmllr-num-iters", &num_iters,
-                 "Number of iterations in fMLLR update phase.");
+  void Register(OptionsItf *opts) {
+    opts->Register("fmllr-update-type", &update_type,
+                   "Update type for fMLLR (\"full\"|\"diag\"|\"offset\"|\"none\")");
+    opts->Register("fmllr-min-count", &min_count,
+                   "Minimum count required to update fMLLR");
+    opts->Register("fmllr-num-iters", &num_iters,
+                   "Number of iterations in fMLLR update phase.");
   }
 };
 
@@ -81,7 +81,10 @@ class FmllrDiagGmmAccs: public AffineXformStats {
   void Init(size_t dim) {
     AffineXformStats::Init(dim, dim); single_frame_stats_.Init(dim);
   }
-
+  void Read(std::istream &in, bool binary, bool add) {
+      AffineXformStats::Read(in, binary, add);
+      single_frame_stats_.Init(Dim());
+  }
   /// Accumulate stats for a single GMM in the model; returns log likelihood.
   BaseFloat AccumulateForGmm(const DiagGmm &gmm,
                              const VectorBase<BaseFloat> &data,

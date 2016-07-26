@@ -31,14 +31,14 @@ If you want to use GPUs (and have them), go to src/, and configure and make on a
 where "nvcc" is installed.  Otherwise, call this script with --use-gpu false
 EOF
   fi
-  parallel_opts="-l gpu=1" 
+  parallel_opts="--gpu 1" 
   num_threads=1
   minibatch_size=512
   # the _a is in case I want to change the parameters.
 else
   num_threads=16
   minibatch_size=128
-  parallel_opts="-pe smp $num_threads" 
+  parallel_opts="--num-threads $num_threads" 
 fi
 
 local/online/run_nnet2_common.sh --stage $stage || exit 1;
@@ -56,7 +56,7 @@ if [ $stage -le 8 ]; then
     --num-threads "$num_threads" \
     --minibatch-size "$minibatch_size" \
     --parallel-opts "$parallel_opts" \
-    --io-opts "-tc 12" \
+    --io-opts "--max-jobs-run 12" \
     --initial-effective-lrate 0.005 --final-effective-lrate 0.0005 \
     --cmd "$decode_cmd" \
     --pnorm-input-dim 2000 \

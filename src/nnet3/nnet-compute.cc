@@ -36,7 +36,7 @@ NnetComputer::NnetComputer(const NnetComputeOptions &options,
                "You must call NnetComputation::ComputeCudaIndexes() before "
                "executing the computation.");
   matrices_.resize(computation.matrices.size());
-  debug_ = (options_.debug || GetVerboseLevel() >= 5);
+  debug_ = (options_.ddebug || GetVerboseLevel() >= 5);
   if (debug_) {
     ComputationVariables variables;
     variables.Init(computation);

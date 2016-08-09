@@ -37,10 +37,10 @@ namespace nnet3 {
 
 
 struct NnetComputeOptions {
-  bool debug;
-  NnetComputeOptions(): debug(false) { }
+  bool ddebug;
+    NnetComputeOptions(): ddebug(false) { } //clang can't handle the word debug; so I've changed it to ddebug
   void Register(OptionsItf *opts) {
-    opts->Register("debug", &debug, "If true, turn on "
+    opts->Register("debug", &ddebug, "If true, turn on "
                    "debug for the neural net computation (very verbose!) "
                    "Will be turned on regardless if --verbose >= 5");
   }

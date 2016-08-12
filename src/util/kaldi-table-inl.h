@@ -724,6 +724,7 @@ class SequentialTableReaderBackgroundImpl:
   // We use the same function signature as the regular Open(),
   // for convenience.
   virtual bool Open(const std::string &rxfilename) {
+#ifndef NO_PTHREAD
     KALDI_ASSERT(base_reader_ != NULL &&
                  base_reader_->IsOpen());  // or code error.
     {
@@ -744,6 +745,11 @@ class SequentialTableReaderBackgroundImpl:
     if (!base_reader_->Done())
       Next();
     return true;
+
+#else
+      throw std::runtime_error("Cannot use threaded implementation on this platform");
+#endif
+
   }
 
   virtual bool IsOpen() const {
@@ -753,6 +759,7 @@ class SequentialTableReaderBackgroundImpl:
   }
 
   void RunInBackground() {
+#ifndef NO_PTHREAD
     try {
       // This function is called in the background thread.  The whole point of
       // the background thread is that we don't want to do the actual reading
@@ -786,6 +793,9 @@ class SequentialTableReaderBackgroundImpl:
       consumer_sem_.Signal();
       return;
     }
+#else
+    throw std::runtime_error("Cannot use threaded implementation on this platform");
+#endif
   }
   static void* run(void *object_in) {
     SequentialTableReaderBackgroundImpl<Holder> *object =
@@ -820,6 +830,7 @@ class SequentialTableReaderBackgroundImpl:
     holder_.Clear();
   }
   virtual void Next() {
+#ifndef NO_PTHREAD
     consumer_sem_.Wait();
     if (base_reader_ == NULL || !base_reader_->IsOpen())
       KALDI_ERR << "Error detected (likely code error) in background "
@@ -834,11 +845,15 @@ class SequentialTableReaderBackgroundImpl:
     // this Signal() tells the producer thread, in the background,
     // that it's now safe to read the next value.
     producer_sem_.Signal();
+#else
+    throw std::runtime_error("Cannot use threaded implementation on this platform");
+#endif
   }
 
   // note: we can be sure that Close() won't be called twice, as the TableReader
   // object will delete this object after calling Close.
   virtual bool Close() {
+#ifndef NO_PTHREAD
     KALDI_ASSERT(base_reader_ != NULL && KALDI_PTHREAD_PTR(thread_) != 0);
     // wait until the producer thread is idle.
     consumer_sem_.Wait();
@@ -859,6 +874,9 @@ class SequentialTableReaderBackgroundImpl:
       return false;
     }
     return ans;
+#else
+    return true;
+#endif
   }
   ~SequentialTableReaderBackgroundImpl() {
     if (base_reader_) {
@@ -871,12 +889,14 @@ class SequentialTableReaderBackgroundImpl:
  private:
   std::string key_;
   Holder holder_;
+#ifndef NO_PTHREAD
   // I couldn't figure out what to call these semaphores.  consumer_sem_ is the
   // one that the consumer (main thread) waits on; producer_sem_ is the one
   // that the producer (background thread) waits on.
   Semaphore consumer_sem_;
   Semaphore producer_sem_;
   pthread_t thread_;
+#endif
   SequentialTableReaderImplBase<Holder> *base_reader_;
 
 };

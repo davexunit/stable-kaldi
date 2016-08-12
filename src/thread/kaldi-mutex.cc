@@ -18,7 +18,6 @@
 // limitations under the License.
 
 
-#include <pthread.h>
 #include <cerrno>
 #include <string.h>
 #include "base/kaldi-error.h"

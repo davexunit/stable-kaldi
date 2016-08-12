@@ -18,7 +18,6 @@
 // limitations under the License.
 
 
-#include <pthread.h>
 #include "base/kaldi-error.h"
 #include "thread/kaldi-barrier.h"
 

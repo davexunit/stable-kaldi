@@ -94,9 +94,6 @@
     <ClCompile Include="..\..\..\src\nnet2\shrink-nnet.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\nnet2\train-nnet-ensemble.cc">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\src\nnet2\widen-nnet.cc">
       <Filter>Source Files</Filter>
     </ClCompile>

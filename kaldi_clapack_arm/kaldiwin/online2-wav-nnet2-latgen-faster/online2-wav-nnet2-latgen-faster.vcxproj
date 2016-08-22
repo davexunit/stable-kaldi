@@ -101,8 +101,7 @@
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'" Label="PropertySheets">
     <Import Project="..\variables.props" />
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="..\kaldiwin_win32.props" />
-    <Import Project="..\openfstwin_release_win32.props" />
+    <Import Project="..\kaldiwin_arm.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
     <Import Project="..\variables.props" />
@@ -195,7 +194,6 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WINDOWS_ARM;KALDI_NO_PORTAUDIO;HAVE_CLAPACK;_ARM_WINAPI_PARTITION_DESKTOP_SDK_AVAILABLE</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>../../../../pthreads-w32/pthreads.2/;../../../tools/openfst/src/include/;../../../tools/CLAPACK/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>

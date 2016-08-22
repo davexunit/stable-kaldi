@@ -19,12 +19,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\src\thread\kaldi-barrier.cc">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\thread\kaldi-mutex.cc">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\src\thread\kaldi-thread.cc">
       <Filter>Source Files</Filter>
     </ClCompile>

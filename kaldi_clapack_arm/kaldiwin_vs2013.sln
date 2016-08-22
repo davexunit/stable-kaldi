@@ -36,6 +36,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "kaldi-sgmm", "kaldiwin\kald
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "kaldi-sgmm2", "kaldiwin\kaldi-sgmm2\kaldi-sgmm2.vcxproj", "{C3C1E4BE-EF86-49DC-9E9A-3DD961EECC63}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "kaldi-thread", "kaldiwin\kaldi-thread\kaldi-thread.vcxproj", "{7B5F0314-69C4-4F93-8514-6E732ED36340}"
+EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "kaldi-transform", "kaldiwin\kaldi-transform\kaldi-transform.vcxproj", "{FDD563C4-7BF9-4CBD-A55D-E1D7D25E6D3C}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "kaldi-tree", "kaldiwin\kaldi-tree\kaldi-tree.vcxproj", "{A6223446-31E7-46B9-A960-A6390AD566B5}"
@@ -256,6 +258,18 @@ Global
 		{C3C1E4BE-EF86-49DC-9E9A-3DD961EECC63}.Release|Win32.Build.0 = Release|Win32
 		{C3C1E4BE-EF86-49DC-9E9A-3DD961EECC63}.Release|x64.ActiveCfg = Release|x64
 		{C3C1E4BE-EF86-49DC-9E9A-3DD961EECC63}.Release|x64.Build.0 = Release|x64
+		{7B5F0314-69C4-4F93-8514-6E732ED36340}.Debug|ARM.ActiveCfg = Debug|ARM
+		{7B5F0314-69C4-4F93-8514-6E732ED36340}.Debug|ARM.Build.0 = Debug|ARM
+		{7B5F0314-69C4-4F93-8514-6E732ED36340}.Debug|Win32.ActiveCfg = Debug|Win32
+		{7B5F0314-69C4-4F93-8514-6E732ED36340}.Debug|Win32.Build.0 = Debug|Win32
+		{7B5F0314-69C4-4F93-8514-6E732ED36340}.Debug|x64.ActiveCfg = Debug|x64
+		{7B5F0314-69C4-4F93-8514-6E732ED36340}.Debug|x64.Build.0 = Debug|x64
+		{7B5F0314-69C4-4F93-8514-6E732ED36340}.Release|ARM.ActiveCfg = Release|ARM
+		{7B5F0314-69C4-4F93-8514-6E732ED36340}.Release|ARM.Build.0 = Release|ARM
+		{7B5F0314-69C4-4F93-8514-6E732ED36340}.Release|Win32.ActiveCfg = Release|Win32
+		{7B5F0314-69C4-4F93-8514-6E732ED36340}.Release|Win32.Build.0 = Release|Win32
+		{7B5F0314-69C4-4F93-8514-6E732ED36340}.Release|x64.ActiveCfg = Release|x64
+		{7B5F0314-69C4-4F93-8514-6E732ED36340}.Release|x64.Build.0 = Release|x64
 		{FDD563C4-7BF9-4CBD-A55D-E1D7D25E6D3C}.Debug|ARM.ActiveCfg = Debug|ARM
 		{FDD563C4-7BF9-4CBD-A55D-E1D7D25E6D3C}.Debug|ARM.Build.0 = Debug|ARM
 		{FDD563C4-7BF9-4CBD-A55D-E1D7D25E6D3C}.Debug|Win32.ActiveCfg = Debug|Win32

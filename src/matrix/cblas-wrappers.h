@@ -32,7 +32,7 @@
 
 namespace kaldi {
 
-#ifndef WINDOWS_ARM
+#ifndef HAVE_CLAPACK
 	inline void cblas_Xcopy(const int N, const float *X, const int incX, float *Y,
 		const int incY) {
 		cblas_scopy(N, X, incX, Y, incY);
@@ -485,7 +485,7 @@ namespace kaldi {
 		*result = clapack_dgetri(CblasColMajor, num_rows, Mdata, stride, pivot);
 	}
 #endif
-#else  // esle WINDOWS_ARM
+#else  // esle HAVE_CLAPACK
 
 
 

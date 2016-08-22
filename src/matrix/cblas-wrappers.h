@@ -33,6 +33,7 @@
 namespace kaldi {
 
 #ifndef HAVE_CLAPACK
+
 	inline void cblas_Xcopy(const int N, const float *X, const int incX, float *Y,
 		const int incY) {
 		cblas_scopy(N, X, incX, Y, incY);
@@ -486,6 +487,7 @@ namespace kaldi {
 	}
 #endif
 #else  // esle HAVE_CLAPACK
+
 
 
 

@@ -41,8 +41,8 @@ endif
 LDFLAGS = -Wl,--no-warn-mismatch -pie
 LDLIBS = $(EXTRA_LDLIBS) $(OPENFSTLIBS) $(OPENBLASLIBS) -ldl -lm_hard
 
-CC = $(HOST)g++
-CXX = $(HOST)g++
+CC = $(HOST)clang++
+CXX = $(HOST)clang++
 AR = $(HOST)ar
 AS = $(HOST)as
 RANLIB = $(HOST)ranlib

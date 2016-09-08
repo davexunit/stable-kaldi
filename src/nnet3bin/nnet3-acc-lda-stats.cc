@@ -42,7 +42,7 @@ class NnetLdaStatsAccumulator {
     const NnetComputation &computation = *(compiler_.Compile(request));
     NnetComputeOptions options;
     if (GetVerboseLevel() >= 3)
-      options.debug = true;
+      options.ddebug = true;
     NnetComputer computer(options, computation, nnet_, NULL);
     
     computer.AcceptInputs(nnet_, eg.io);
